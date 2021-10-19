@@ -3,13 +3,24 @@
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
-  "scripts": {
-    "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "David H",
   "license": "ISC",
-  "devDependencies": {
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ."
+  },
+  "pre-commit": [
+    "lint"
+  ],
+  "dependencies": {
     "electron": "^15.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-security": "^1.4.0",
+    "pre-commit": "^1.2.2"
   }
 }
