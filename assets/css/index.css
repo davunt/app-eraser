@@ -33,18 +33,33 @@ html, body {
 .files-grid-item {
   display: flex;
   flex: 2;
+  flex-direction: column;
   background-color: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(0, 0, 0, 0.8);
 }
 .files-container-header{
   display: flex;
   flex-direction: row;
-  flex: 1;
+  /* flex: 1; */
   background-color: aqua;
-  height: 10%;
+  /* height: 10%; */
   align-items: center;
 }
 .files-header-title{
   font-size: 20px;
   margin-left: 10px;
 }
+
+.bottom-action-bar{
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: green;
+  padding: 10px;
+  /* flex-direction: row; */
+}
+/* #delete-button{
+  right: 10px;
+  display: flex;
+  justify-content: flex-end;
+} */
