@@ -4,15 +4,15 @@ const { app, BrowserWindow } = require('electron');
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1000,
+    height: 500,
   });
 
   // and load the index.html of the app.
   mainWindow.loadFile('src/index/index.html');
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools();
 }
 
 // This method will be called when Electron has finished

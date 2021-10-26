@@ -1,0 +1,50 @@
+html, body {
+  margin: 0;
+  background-color: red;
+  height: 100%;
+}
+
+.grid-container {
+  background-color: #2196F3;
+  display: flex;
+  flex: 1;
+  height: 100%;
+  flex-direction: row;
+}
+
+.drag-drop-grid-item {
+  display: flex;
+  flex: 1;
+  background-color: hsla(140, 47%, 35%, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  padding: 20px;
+}
+#drag-drop-zone {
+  display: flex;
+  flex: 1;
+  text-align: center;
+  padding: 20px;
+  border: 2px dashed;
+  border-radius: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.files-grid-item {
+  display: flex;
+  flex: 2;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+}
+.files-container-header{
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  background-color: aqua;
+  height: 10%;
+  align-items: center;
+}
+.files-header-title{
+  font-size: 20px;
+  margin-left: 10px;
+}
