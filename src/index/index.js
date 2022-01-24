@@ -30,7 +30,19 @@ dropZone.addEventListener('dragover', (e) => {
 });
 
 async function moveFilesToTrash(files) {
+
+  const checkboxes = document.querySelectorAll('input[name="checkbox"]:checked');
+
+  const selectedFiles = [];
+
+  checkboxes.forEach((checkbox) => {
+    console.log(checkbox.value);
+    selectedFiles.push(checkbox.value);
+  });
+
   console.log('About to move files to trash', files);
+
+  console.log(selectedFiles);
 
   const spOptions = {
     name: 'App Eraser',
@@ -126,6 +138,9 @@ async function findAppFiles(appName) {
 }
 
 async function removeApp(appPath) {
+  document.getElementById("loadingContainer").style.display = "flex";
+
+  clearList();
   const appName = appNameFromPath(appPath);
   console.log(`About to remove app '${appName}'`);
   console.log(pathLocations);
@@ -133,12 +148,25 @@ async function removeApp(appPath) {
   console.log(appFiles);
   appFiles.forEach((filePath) => {
     console.log(filePath);
-    const li = document.createElement('li');
-    const itemText = document.createTextNode(filePath);
 
-    li.appendChild(itemText);
-    fileList.appendChild(li);
+    const div = document.createElement('div');
+    div.classList.add('fileItem');
+
+    const inp = document.createElement('input');
+    inp.type = 'checkbox';
+    inp.id = 'checkbox';
+    inp.name = 'checkbox';
+    inp.value = filePath;
+    inp.checked = true;
+
+    var label = document.createElement('label');
+    label.htmlFor = "checkbox";
+    label.appendChild(document.createTextNode(filePath));
+    div.append(inp);
+    div.appendChild(label);
+    fileList.appendChild(div);
   });
 
   deleteButton.disabled = false;
+  document.getElementById("loadingContainer").style.display = "none";
 }

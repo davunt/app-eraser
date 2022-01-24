@@ -11,6 +11,11 @@
     <title>App Eraser</title>
   </head>
   <body>
+
+    <div id="loadingContainer">
+      <p id="loadingText">Searching for related files...</p>
+    </div>
+
     <div class="grid-container">
 
       <div class="drag-drop-grid-item" id="drag-drop-grid-item">
@@ -23,10 +28,8 @@
         <div class="files-container-header">
           <h2 class="files-header-title">Related Files</h2>
         </div>
-        <div>
-          <ul id="files-list">
-
-          </ul>
+        <div class="scroll-view">
+          <div id="files-list" />
         </div>
           <div class="bottom-action-bar">
             <button id="clear-button">Clear</button>
