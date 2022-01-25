@@ -59,6 +59,7 @@ html, body {
 .scroll-view{
   overflow-x: hidden;
   overflow-y: auto;
+  padding-bottom: 40px;
 }
 
 .fileItem{

@@ -99,6 +99,25 @@ async function findAppFiles(appName) {
   }
 }
 
+function listItem(filePath) {
+  const div = document.createElement('div');
+  div.classList.add('fileItem');
+
+  const inp = document.createElement('input');
+  inp.type = 'checkbox';
+  inp.id = 'checkbox';
+  inp.name = 'checkbox';
+  inp.value = filePath;
+  inp.checked = true;
+
+  const label = document.createElement('label');
+  label.htmlFor = 'checkbox';
+  label.appendChild(document.createTextNode(filePath));
+  div.append(inp);
+  div.appendChild(label);
+  fileList.appendChild(div);
+}
+
 async function removeApp(appPath) {
   document.getElementById('loadingContainer').style.display = 'flex';
 
@@ -106,22 +125,7 @@ async function removeApp(appPath) {
   const appName = appNameFromPath(appPath);
   appFiles = await findAppFiles(appName);
   appFiles.forEach((filePath) => {
-    const div = document.createElement('div');
-    div.classList.add('fileItem');
-
-    const inp = document.createElement('input');
-    inp.type = 'checkbox';
-    inp.id = 'checkbox';
-    inp.name = 'checkbox';
-    inp.value = filePath;
-    inp.checked = true;
-
-    const label = document.createElement('label');
-    label.htmlFor = 'checkbox';
-    label.appendChild(document.createTextNode(filePath));
-    div.append(inp);
-    div.appendChild(label);
-    fileList.appendChild(div);
+    listItem(filePath);
   });
 
   deleteButton.disabled = false;
