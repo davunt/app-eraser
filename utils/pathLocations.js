@@ -2,6 +2,7 @@ const homedir = require('os').homedir();
 
 const pathLocations = [
   '/Applications',
+  `${homedir}/Downloads`,
   `${homedir}/Library`,
   `${homedir}/Library/Application Support`,
   `${homedir}/Library/Application Scripts`,

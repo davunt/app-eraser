@@ -40,9 +40,7 @@ html, body {
 .files-container-header{
   display: flex;
   flex-direction: row;
-  /* flex: 1; */
   background-color: aqua;
-  /* height: 10%; */
   align-items: center;
 }
 .files-header-title{
@@ -56,13 +54,7 @@ html, body {
   width: 100%;
   background-color: green;
   padding: 10px;
-  /* flex-direction: row; */
 }
-/* #delete-button{
-  right: 10px;
-  display: flex;
-  justify-content: flex-end;
-} */
 
 .scroll-view{
   overflow-x: hidden;

@@ -1,69 +1,17 @@
 const fs = require('fs/promises');
-const { exec } = require('child_process');
+// eslint-disable-next-line security/detect-child-process
+const { execSync } = require('child_process');
+
 const { pathLocations } = require('../../utils/pathLocations');
 
-// eslint-disable-next-line no-undef
 const dropZone = document.getElementById('drag-drop-zone');
-// eslint-disable-next-line no-undef
 const fileList = document.getElementById('files-list');
-// eslint-disable-next-line no-undef
 const deleteButton = document.getElementById('delete-button');
-// eslint-disable-next-line no-undef
 const clearButton = document.getElementById('clear-button');
 
 let appFiles = [];
 
-dropZone.addEventListener('drop', (event) => {
-  event.preventDefault();
-  event.stopPropagation();
-
-  for (const f of event.dataTransfer.files) {
-    // Using the path attribute to get absolute file path
-    console.log('File Path of dragged files: ', f.path);
-    removeApp(f.path);
-  }
-});
-
-dropZone.addEventListener('dragover', (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-});
-
-async function moveFilesToTrash(files) {
-
-  const checkboxes = document.querySelectorAll('input[name="checkbox"]:checked');
-
-  const selectedFiles = [];
-
-  checkboxes.forEach((checkbox) => {
-    console.log(checkbox.value);
-    selectedFiles.push(checkbox.value);
-  });
-
-  console.log('About to move files to trash', files);
-
-  console.log(selectedFiles);
-
-  const spOptions = {
-    name: 'App Eraser',
-  };
-
-  const posixFile = `POSIX file \\"${files.join('\\", POSIX file \\"')}\\"`;
-
-  exec(`osascript -e "tell application \\"Finder\\" to delete { ${posixFile} } "`, spOptions,
-    (error, stdout) => {
-      if (error) throw error;
-      console.log(`stdout: ${stdout}`);
-    });
-}
-
-deleteButton.addEventListener('click', (e) => {
-  console.log('delete button clicked');
-  console.log(appFiles);
-  moveFilesToTrash(appFiles);
-});
-
-const removeChilds = (parent) => {
+const removeChildren = (parent) => {
   while (parent.lastChild) {
     parent.removeChild(parent.lastChild);
   }
@@ -71,29 +19,44 @@ const removeChilds = (parent) => {
 
 function clearList() {
   appFiles = [];
-  removeChilds(fileList);
+  removeChildren(fileList);
   deleteButton.disabled = true;
 }
 
-clearButton.addEventListener('click', (e) => {
-  console.log('delete button clicked');
-  console.log(appFiles);
+async function moveFilesToTrash() {
+  const checkboxes = document.querySelectorAll('input[name="checkbox"]:checked');
+
+  const selectedFiles = [];
+
+  checkboxes.forEach((checkbox) => {
+    selectedFiles.push(checkbox.value);
+  });
+
+  const spOptions = {
+    name: 'App Eraser',
+  };
+
+  const posixFile = `POSIX file \\"${selectedFiles.join('\\", POSIX file \\"')}\\"`;
+
+  await execSync(`osascript -e "tell application \\"Finder\\" to delete { ${posixFile} } "`, spOptions).toString();
+}
+
+deleteButton.addEventListener('click', () => {
+  document.getElementById('loadingContainer').style.display = 'flex';
+  document.getElementById('loadingText').innerHTML = 'deleting files...';
+  moveFilesToTrash(appFiles);
+  clearList();
+  document.getElementById('loadingContainer').style.display = 'none';
+});
+
+clearButton.addEventListener('click', () => {
   clearList(appFiles);
 });
 
 async function getBundleIdentifier(appName) {
-  const bundleId = await new Promise((resolve, reject) => {
-    exec(`osascript -e 'id of app "${appName}"'`, (error, stdout) => {
-      if (error) {
-        console.error(error);
-        reject(error);
-      }
-      // remove new line
-      resolve(stdout.substring(0, stdout.length - 1));
-    });
-  });
+  const bundleId = await execSync(`osascript -e 'id of app "${appName}"'`).toString();
 
-  return bundleId;
+  return bundleId.substring(0, bundleId.length - 1);
 }
 
 function appNameFromPath(path) {
@@ -122,8 +85,7 @@ async function findAppFiles(appName) {
             dirFileNorm.includes(appNameNorm)
             || dirFileNorm.includes(bundleIdNorm)
           ) {
-            console.log(`${pathLocations[index]}/${dirFile}`);
-            filesToRemove.add(`${pathLocations[index]}/${dirFile}`);
+            filesToRemove.add(`${pathLocations[parseInt(index, 10)]}/${dirFile}`);
           }
         });
       }
@@ -138,17 +100,12 @@ async function findAppFiles(appName) {
 }
 
 async function removeApp(appPath) {
-  document.getElementById("loadingContainer").style.display = "flex";
+  document.getElementById('loadingContainer').style.display = 'flex';
 
   clearList();
   const appName = appNameFromPath(appPath);
-  console.log(`About to remove app '${appName}'`);
-  console.log(pathLocations);
   appFiles = await findAppFiles(appName);
-  console.log(appFiles);
   appFiles.forEach((filePath) => {
-    console.log(filePath);
-
     const div = document.createElement('div');
     div.classList.add('fileItem');
 
@@ -159,8 +116,8 @@ async function removeApp(appPath) {
     inp.value = filePath;
     inp.checked = true;
 
-    var label = document.createElement('label');
-    label.htmlFor = "checkbox";
+    const label = document.createElement('label');
+    label.htmlFor = 'checkbox';
     label.appendChild(document.createTextNode(filePath));
     div.append(inp);
     div.appendChild(label);
@@ -168,5 +125,22 @@ async function removeApp(appPath) {
   });
 
   deleteButton.disabled = false;
-  document.getElementById("loadingContainer").style.display = "none";
+  document.getElementById('loadingContainer').style.display = 'none';
 }
+
+dropZone.addEventListener('drop', (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const { files } = event.dataTransfer;
+
+  Object.keys(files).forEach((f) => {
+    // Using the path attribute to get absolute file path
+    removeApp(files[`${f}`].path);
+  });
+});
+
+dropZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+});
