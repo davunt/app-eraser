@@ -99,9 +99,14 @@ async function findAppFiles(appName) {
   }
 }
 
-function listItem(filePath) {
+function listItem(filePath, index) {
+  const isEven = index % 2 === 0;
   const div = document.createElement('div');
-  div.classList.add('fileItem');
+  if (isEven) {
+    div.classList.add('fileItem1');
+  } else {
+    div.classList.add('fileItem2');
+  }
 
   const inp = document.createElement('input');
   inp.type = 'checkbox';
@@ -124,8 +129,8 @@ async function removeApp(appPath) {
   clearList();
   const appName = appNameFromPath(appPath);
   appFiles = await findAppFiles(appName);
-  appFiles.forEach((filePath) => {
-    listItem(filePath);
+  appFiles.forEach((filePath, i) => {
+    listItem(filePath, i);
   });
 
   deleteButton.disabled = false;
