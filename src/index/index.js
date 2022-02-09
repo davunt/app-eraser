@@ -5,7 +5,9 @@ const { ipcRenderer } = require('electron');
 
 const { pathLocations } = require('../../utils/pathLocations');
 
+const loadingContainer = document.getElementById('loadingContainer');
 const dropZone = document.getElementById('drag-drop-zone');
+const headerText = document.getElementById('files-header-title');
 const fileList = document.getElementById('files-list');
 const deleteButton = document.getElementById('delete-button');
 const clearButton = document.getElementById('clear-button');
@@ -129,17 +131,20 @@ function listItem(filePath, index) {
 }
 
 async function removeApp(appPath) {
-  document.getElementById('loadingContainer').style.display = 'flex';
+  loadingContainer.style.display = 'flex';
 
   clearList();
   const appName = appNameFromPath(appPath);
+
   appFiles = await findAppFiles(appName);
   appFiles.forEach((filePath, i) => {
     listItem(filePath, i);
   });
 
+  headerText.innerHTML = `${appName} (${appFiles.length} Files)`;
+
   deleteButton.disabled = false;
-  document.getElementById('loadingContainer').style.display = 'none';
+  loadingContainer.style.display = 'none';
 }
 
 dropZone.addEventListener('drop', (event) => {
