@@ -21,6 +21,13 @@ html, body {
   padding: 20px;
 }
 
+.drag-drop-grid-item:hover {
+  display: flex;
+  flex: 1;
+  background-color: #3b383a;
+  padding: 20px;
+}
+
 #drag-drop-zone {
   display: flex;
   flex-direction: column;
@@ -95,11 +102,11 @@ html, body {
 
 button {
   border: none;
+  float: right;
   background-color: rgba(150, 150, 150, 0.8);
   color:rgba(255, 255, 255, 0.8);
   text-align: center;
   text-decoration: none;
-  display: inline-block;
   font-size: 15px;
   padding: 5px;
   border-radius: 3px;

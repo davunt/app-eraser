@@ -1,11 +1,13 @@
 // Modules to control application life and create native browser window
 const {
-  app, BrowserWindow,
+  app, BrowserWindow, dialog, ipcMain,
 } = require('electron');
+
+let mainWindow;
 
 function createWindow() {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1000,
     height: 500,
     webPreferences: {
@@ -18,7 +20,7 @@ function createWindow() {
   mainWindow.loadFile('src/index/index.html');
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 }
 
 // This method will be called when Electron has finished
@@ -39,4 +41,24 @@ app.whenReady().then(() => {
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
+});
+
+ipcMain.on('selectAppFromFinder', async () => {
+  try {
+    const selection = await dialog.showOpenDialog({
+      defaultPath: '/Applications',
+      buttonLabel: 'Select',
+      filters: [
+        { name: 'Apps', extensions: ['.app'] },
+      ],
+      properties: ['openFile'],
+    });
+
+    if (!selection.canceled) {
+      const selectedFilePath = selection.filePaths[0];
+      mainWindow.webContents.send('selectAppFromFinder', selectedFilePath);
+    }
+  } catch (err) {
+    console.error(err);
+  }
 });

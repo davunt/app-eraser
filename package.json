@@ -13,8 +13,7 @@
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
-    "app:dir": "electron-builder --dir",
-    "app:dist": "electron-builder"
+    "dist": "electron-builder"
   },
   "pre-commit": [
     "lint"

@@ -1,6 +1,7 @@
 const fs = require('fs/promises');
 // eslint-disable-next-line security/detect-child-process
 const { execSync } = require('child_process');
+const { ipcRenderer } = require('electron');
 
 const { pathLocations } = require('../../utils/pathLocations');
 
@@ -51,6 +52,10 @@ deleteButton.addEventListener('click', () => {
 
 clearButton.addEventListener('click', () => {
   clearList(appFiles);
+});
+
+dropZone.addEventListener('click', () => {
+  ipcRenderer.send('selectAppFromFinder');
 });
 
 async function getBundleIdentifier(appName) {
@@ -152,4 +157,8 @@ dropZone.addEventListener('drop', (event) => {
 dropZone.addEventListener('dragover', (e) => {
   e.preventDefault();
   e.stopPropagation();
+});
+
+ipcRenderer.on('selectAppFromFinder', (e, value) => {
+  removeApp(value);
 });
