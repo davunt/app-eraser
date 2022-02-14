@@ -1,6 +1,4 @@
-# Description
-App Eraser is a macOS app removal tool.
-
+# App Eraser - macOS App Removal Tool
 App Eraser is Free/Libre and Open Source.
 
 ## Install
