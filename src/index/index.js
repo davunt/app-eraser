@@ -73,6 +73,27 @@ function appNameFromPath(path) {
   return appNameWithExt.slice(0, appNameWithExt.length - 4);
 }
 
+async function getFilePatternArray(appName, bundleId) {
+  const appNameNorm = appName.toLowerCase().replace(' ', '');
+  const bundleIdNorm = bundleId.toLowerCase().replace(' ', '');
+
+  const patternArray = [appNameNorm, bundleIdNorm];
+
+  const bundleIdComponents = bundleId.split('.');
+  if (bundleIdComponents.length > 3) patternArray.push(bundleIdComponents.splice(0, 2).join('.'));
+
+  return patternArray;
+}
+
+function isPatternInFile(patterns, fileToCheck) {
+  return patterns.find((filePatten) => {
+    if (fileToCheck.includes(filePatten)) {
+      return true;
+    }
+    return false;
+  });
+}
+
 async function findAppFiles(appName) {
   try {
     const filesToRemove = new Set([]);
@@ -81,16 +102,14 @@ async function findAppFiles(appName) {
 
     const bundleId = await getBundleIdentifier(appName);
 
-    const appNameNorm = appName.toLowerCase().replace(' ', '');
-    const bundleIdNorm = bundleId.toLowerCase().replace(' ', '');
+    const patternArray = await getFilePatternArray(appName, bundleId);
 
     directoryFiles.forEach((dir, index) => {
       if (dir.status === 'fulfilled') {
         dir.value.forEach((dirFile) => {
           const dirFileNorm = dirFile.toLowerCase().replace(' ', '');
           if (
-            dirFileNorm.includes(appNameNorm)
-            || dirFileNorm.includes(bundleIdNorm)
+            isPatternInFile(patternArray, dirFileNorm)
           ) {
             filesToRemove.add(`${pathLocations[parseInt(index, 10)]}/${dirFile}`);
           }
@@ -130,10 +149,17 @@ function listItem(filePath, index) {
   fileList.appendChild(div);
 }
 
+async function isValidApp(appPath) {
+  const extension = appPath.slice(-4);
+  if (!extension === '.app') return false;
+  return true;
+}
+
 async function removeApp(appPath) {
   loadingContainer.style.display = 'flex';
 
   clearList();
+  await isValidApp(appPath);
   const appName = appNameFromPath(appPath);
 
   appFiles = await findAppFiles(appName);
