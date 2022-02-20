@@ -2,6 +2,16 @@
 const {
   app, BrowserWindow, dialog, ipcMain,
 } = require('electron');
+const path = require('path');
+
+const env = process.env.NODE_ENV;
+if (env === 'development') {
+  // eslint-disable-next-line
+  require('electron-reload')(__dirname, {
+    electron: path.join(__dirname, 'node_modules', '.bin', 'electron'),
+    hardResetMethod: 'exit',
+  });
+}
 
 let mainWindow;
 
@@ -19,8 +29,9 @@ function createWindow() {
   // and load the index.html of the app.
   mainWindow.loadFile('src/index/index.html');
 
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools();
+  if (env === 'development') {
+    mainWindow.webContents.openDevTools();
+  }
 }
 
 // This method will be called when Electron has finished

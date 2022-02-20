@@ -9,7 +9,7 @@ Supports macOS v11.6+.
 ## Why?
 When deleting apps in macOS, many related files are left behind, taking up space on your hard drive. App Eraser helps to find these files and provides a quick and easy way to delete them.
 
-Similar tools exist, however I believe a open source version is perfect for ensuring constant improvement and user privacy.
+Similar tools exist, however I believe an open source version is perfect for ensuring constant improvement and user privacy.
 
 I’ve used similar tools in the past and have had issues related to some files remaining after the app has been deleted. I think an open source tool will allow for the community to work together to create a better app removal tool.
 

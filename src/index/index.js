@@ -77,7 +77,7 @@ async function getFilePatternArray(appName, bundleId) {
   const appNameNorm = appName.toLowerCase().replace(' ', '');
   const bundleIdNorm = bundleId.toLowerCase().replace(' ', '');
 
-  const patternArray = [appNameNorm, bundleIdNorm];
+  const patternArray = [`${appNameNorm}`, bundleIdNorm];
 
   const bundleIdComponents = bundleId.split('.');
   if (bundleIdComponents.length > 3) patternArray.push(bundleIdComponents.splice(0, 2).join('.'));
