@@ -77,10 +77,7 @@ async function getFilePatternArray(appName, bundleId) {
   const appNameNorm = appName.toLowerCase().replace(' ', '');
   const bundleIdNorm = bundleId.toLowerCase().replace(' ', '');
 
-  const patternArray = [`${appNameNorm}`, bundleIdNorm];
-
-  const bundleIdComponents = bundleId.split('.');
-  if (bundleIdComponents.length > 3) patternArray.push(bundleIdComponents.splice(0, 2).join('.'));
+  const patternArray = [appNameNorm, bundleIdNorm];
 
   return patternArray;
 }
@@ -96,11 +93,14 @@ function isPatternInFile(patterns, fileToCheck) {
 
 async function findAppFiles(appName) {
   try {
-    const filesToRemove = new Set([]);
-    const directoryFilesPromiseArr = pathLocations.map((pathLocation) => fs.readdir(pathLocation));
-    const directoryFiles = await Promise.allSettled(directoryFilesPromiseArr);
-
     const bundleId = await getBundleIdentifier(appName);
+    const bundleIdComponents = bundleId.split('.');
+    const filesToRemove = new Set([]);
+
+    const companyDirs = pathLocations.map((pathLocation) => `${pathLocation}/${bundleIdComponents[1]}`);
+    const pathsToSearch = [...pathLocations, ...companyDirs];
+    const directoryFilesPromiseArr = pathsToSearch.map((pathLocation) => fs.readdir(pathLocation));
+    const directoryFiles = await Promise.allSettled(directoryFilesPromiseArr);
 
     const patternArray = await getFilePatternArray(appName, bundleId);
 
@@ -111,7 +111,7 @@ async function findAppFiles(appName) {
           if (
             isPatternInFile(patternArray, dirFileNorm)
           ) {
-            filesToRemove.add(`${pathLocations[parseInt(index, 10)]}/${dirFile}`);
+            filesToRemove.add(`${pathsToSearch[parseInt(index, 10)]}/${dirFile}`);
           }
         });
       }

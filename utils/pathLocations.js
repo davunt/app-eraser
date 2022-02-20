@@ -2,6 +2,8 @@ const homedir = require('os').homedir();
 
 const pathLocations = [
   '/Applications',
+  '/private/var/db/receipts',
+  '/Library/LaunchDaemons',
   `${homedir}/Downloads`,
   `${homedir}/Library`,
   `${homedir}/Library/Application Support`,
@@ -18,7 +20,6 @@ const pathLocations = [
   `${homedir}/Library/Preferences/ByHost`,
   `${homedir}/Library/Saved Application State`,
   `${homedir}/Library/WebKit`,
-  '/private/var/db/receipts',
 ];
 
 module.exports = {
