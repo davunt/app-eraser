@@ -79,6 +79,9 @@ async function getFilePatternArray(appName, bundleId) {
 
   const patternArray = [appNameNorm, bundleIdNorm];
 
+  const bundleIdComponents = bundleIdNorm.split('.');
+  if (bundleIdComponents.length > 2) patternArray.push(`${bundleIdComponents.slice(0, bundleIdComponents.length - 1)}`);
+
   return patternArray;
 }
 
@@ -155,9 +158,16 @@ async function isValidApp(appPath) {
   return true;
 }
 
-async function removeApp(appPath) {
+function displayLoading() {
   loadingContainer.style.display = 'flex';
+}
 
+function hideLoading() {
+  loadingContainer.style.display = 'none';
+}
+
+async function removeApp(appPath) {
+  displayLoading();
   clearList();
   await isValidApp(appPath);
   const appName = appNameFromPath(appPath);
@@ -170,7 +180,7 @@ async function removeApp(appPath) {
   headerText.innerHTML = `${appName} (${appFiles.length} Files)`;
 
   deleteButton.disabled = false;
-  loadingContainer.style.display = 'none';
+  hideLoading();
 }
 
 dropZone.addEventListener('drop', (event) => {

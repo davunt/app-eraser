@@ -15,6 +15,7 @@ html, body {
 }
 
 .drag-drop-grid-item {
+  z-index: 1;
   display: flex;
   flex: 1;
   background-color: #2e2c2d;
@@ -64,6 +65,16 @@ html, body {
   width: 100%;
   background-color: #2e2c2d;
   padding: 10px;
+}
+
+#clear-button{
+  float: right;
+  margin-right: 10px;
+}
+
+#delete-button{
+  float: right;
+  margin-right: 30px;
 }
 
 .scroll-view{
