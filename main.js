@@ -1,6 +1,6 @@
 // Modules to control application life and create native browser window
 const {
-  app, BrowserWindow, dialog, ipcMain,
+  app, Menu, BrowserWindow, dialog, ipcMain, shell,
 } = require('electron');
 const path = require('path');
 
@@ -34,6 +34,47 @@ function createWindow() {
   }
 }
 
+function createAboutWindow() {
+  const aboutWindow = new BrowserWindow({
+    width: 500,
+    height: 400,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+  });
+
+  aboutWindow.loadFile('src/about/index.html');
+
+  if (env === 'development') {
+    aboutWindow.webContents.openDevTools();
+  }
+
+  aboutWindow.webContents.on('did-finish-load', () => {
+    aboutWindow.webContents.send('appVersion', app.getVersion());
+  });
+}
+
+const mainMenuTemplate = [
+  {
+    label: app.name,
+    submenu: [
+      {
+        label: 'About',
+        click() {
+          createAboutWindow();
+        },
+      },
+      {
+        label: 'Quit',
+        click() {
+          app.quit();
+        },
+      },
+    ],
+  },
+];
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -45,6 +86,9 @@ app.whenReady().then(() => {
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
+
+  const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
+  Menu.setApplicationMenu(mainMenu);
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -69,6 +113,14 @@ ipcMain.on('selectAppFromFinder', async () => {
       const selectedFilePath = selection.filePaths[0];
       mainWindow.webContents.send('selectAppFromFinder', selectedFilePath);
     }
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+ipcMain.on('openURL', async (e, url) => {
+  try {
+    shell.openExternal(url);
   } catch (err) {
     console.error(err);
   }

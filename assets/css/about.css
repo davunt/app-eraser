@@ -1,0 +1,41 @@
+html, body{
+  font-family: Helvetica;
+  height: 100%;
+  width: 100%;
+  margin: 10;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items: center;
+  background-color: #2e2c2d;
+  color:rgba(255, 255, 255, 0.8);
+}
+
+hr {
+  width: 80%;
+  margin: 10px;
+  margin-top: 15px;
+  border: 0;
+  border-top: 1px solid;
+}
+
+.fa {
+  text-decoration: none;
+  border-radius: 100px;
+  padding: 10px;
+}
+
+.fa-twitter {  
+  background: #55ACEE;  
+  color: white;
+}
+
+.fa-github {  
+  background: white;  
+  color: black;
+}
+
+.fa:hover {
+  background-color: rgba(200, 200, 200, 0.8);
+  color:rgba(255, 255, 255, 0.8);
+}
