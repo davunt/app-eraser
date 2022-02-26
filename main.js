@@ -98,6 +98,17 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
+function handleError(message) {
+  try {
+    dialog.showErrorBox(
+      'An error occurred',
+      message,
+    );
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 ipcMain.handle('selectAppFromFinder', async () => {
   try {
     const selection = await dialog.showOpenDialog({
@@ -116,7 +127,24 @@ ipcMain.handle('selectAppFromFinder', async () => {
     return false;
   } catch (err) {
     console.error(err);
-    throw err;
+    handleError(err.message);
+    return err;
+  }
+});
+
+ipcMain.handle('confirmDialog', async (e, message, detail) => {
+  try {
+    console.log(detail);
+    return dialog.showMessageBox({
+      message,
+      detail,
+      type: 'question',
+      buttons: ['Yes', 'No'],
+    });
+  } catch (err) {
+    console.error(err);
+    handleError(err.message);
+    return err;
   }
 });
 
@@ -125,5 +153,6 @@ ipcMain.on('openURL', async (e, url) => {
     shell.openExternal(url);
   } catch (err) {
     console.error(err);
+    handleError(err.message);
   }
 });

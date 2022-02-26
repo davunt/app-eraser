@@ -14,6 +14,8 @@ const clearButton = document.getElementById('clear-button');
 
 let appFiles = [];
 
+const getSelectedFiles = () => [...document.querySelectorAll('input[name=checkbox]:checked')].map((item) => item.value);
+
 const removeChildren = (parent) => {
   while (parent.lastChild) {
     parent.removeChild(parent.lastChild);
@@ -24,16 +26,11 @@ function clearList() {
   appFiles = [];
   removeChildren(fileList);
   deleteButton.disabled = true;
+  headerText.innerHTML = 'Related Files';
 }
 
 async function moveFilesToTrash() {
-  const checkboxes = document.querySelectorAll('input[name="checkbox"]:checked');
-
-  const selectedFiles = [];
-
-  checkboxes.forEach((checkbox) => {
-    selectedFiles.push(checkbox.value);
-  });
+  const selectedFiles = getSelectedFiles();
 
   const spOptions = {
     name: 'App Eraser',
@@ -46,7 +43,6 @@ async function moveFilesToTrash() {
 
 async function getBundleIdentifier(appName) {
   const bundleId = await execSync(`osascript -e 'id of app "${appName}"'`).toString();
-
   return bundleId.substring(0, bundleId.length - 1);
 }
 
@@ -64,7 +60,7 @@ async function getFilePatternArray(appName, bundleId) {
   const patternArray = [appNameNorm, bundleIdNorm];
 
   const bundleIdComponents = bundleIdNorm.split('.');
-  if (bundleIdComponents.length > 2) patternArray.push(`${bundleIdComponents.slice(0, bundleIdComponents.length - 1)}`);
+  if (bundleIdComponents.length > 2) patternArray.push(`${bundleIdComponents.slice(0, bundleIdComponents.length - 1).join('.')}`);
 
   return patternArray;
 }
@@ -167,12 +163,22 @@ async function removeApp(appPath) {
   hideLoading();
 }
 
-deleteButton.addEventListener('click', () => {
-  document.getElementById('loadingContainer').style.display = 'flex';
-  document.getElementById('loadingText').innerHTML = 'deleting files...';
-  moveFilesToTrash(appFiles);
-  clearList();
-  document.getElementById('loadingContainer').style.display = 'none';
+deleteButton.addEventListener('click', async () => {
+  const selectedFiles = getSelectedFiles();
+
+  const confirmDialogResp = await ipcRenderer.invoke(
+    'confirmDialog',
+    'Are you sure?',
+    `${selectedFiles.length} files will be moved to trash`,
+  );
+
+  if (confirmDialogResp.response === 0) {
+    document.getElementById('loadingContainer').style.display = 'flex';
+    document.getElementById('loadingText').innerHTML = 'deleting files...';
+    moveFilesToTrash(selectedFiles);
+    clearList();
+    document.getElementById('loadingContainer').style.display = 'none';
+  }
 });
 
 clearButton.addEventListener('click', () => {
