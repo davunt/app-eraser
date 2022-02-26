@@ -3,6 +3,7 @@ const {
   app, Menu, BrowserWindow, dialog, ipcMain, shell,
 } = require('electron');
 const path = require('path');
+const { issuesURL } = require('./utils/constants');
 
 const env = process.env.NODE_ENV;
 if (env === 'development') {
@@ -67,8 +68,27 @@ const mainMenuTemplate = [
       },
       {
         label: 'Quit',
+        accelerator: 'Cmd+Q',
         click() {
           app.quit();
+        },
+      },
+    ],
+  },
+  {
+    label: 'Help',
+    submenu: [
+      {
+        label: 'Report Issue',
+        click() {
+          shell.openExternal(issuesURL);
+        },
+      },
+      {
+        label: 'Open Dev Tools',
+        accelerator: 'Cmd+Alt+I',
+        click() {
+          mainWindow.webContents.openDevTools();
         },
       },
     ],
