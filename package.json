@@ -13,7 +13,10 @@
     "start": "export NODE_ENV=development&&electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
-    "dist": "electron-builder"
+    "dist": "npm version patch && electron-builder",
+    "build": "electron-builder",
+    "version": "git add -A",
+    "postversion": "git push && git push --tags"
   },
   "pre-commit": [
     "lint"
