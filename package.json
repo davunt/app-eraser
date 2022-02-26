@@ -1,6 +1,6 @@
 {
   "name": "app-eraser",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "main.js",
   "author": "David H",
@@ -18,8 +18,7 @@
   "pre-commit": [
     "lint"
   ],
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "electron": "^15.2.0",
     "electron-builder": "^22.14.5",
