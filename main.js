@@ -129,6 +129,10 @@ function handleError(message) {
   }
 }
 
+ipcMain.on('handleError', (e, message) => {
+  handleError(message);
+});
+
 ipcMain.handle('selectAppFromFinder', async () => {
   try {
     const selection = await dialog.showOpenDialog({

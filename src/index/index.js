@@ -1,18 +1,16 @@
+const { ipcRenderer } = require('electron');
 const fs = require('fs/promises');
+const path = require('path');
 // eslint-disable-next-line security/detect-child-process
 const { execSync } = require('child_process');
-const { ipcRenderer } = require('electron');
 
 const { pathLocations } = require('../../utils/pathLocations');
 
-const loadingContainer = document.getElementById('loadingContainer');
 const dropZone = document.getElementById('drag-drop-zone');
 const headerText = document.getElementById('files-header-title');
 const fileList = document.getElementById('files-list');
 const deleteButton = document.getElementById('delete-button');
 const clearButton = document.getElementById('clear-button');
-
-let appFiles = [];
 
 const getSelectedFiles = () => [...document.querySelectorAll('input[name=checkbox]:checked')].map((item) => item.value);
 
@@ -23,7 +21,6 @@ const removeChildren = (parent) => {
 };
 
 function clearList() {
-  appFiles = [];
   removeChildren(fileList);
   deleteButton.disabled = true;
   headerText.innerHTML = 'Related Files';
@@ -43,14 +40,15 @@ async function moveFilesToTrash() {
 
 async function getBundleIdentifier(appName) {
   const bundleId = await execSync(`osascript -e 'id of app "${appName}"'`).toString();
+  // remove empty space at end of string
   return bundleId.substring(0, bundleId.length - 1);
 }
 
-function appNameFromPath(path) {
-  const pathArr = path.split('/');
+function appNameFromPath(appPath) {
+  const pathArr = appPath.split('/');
   const appNameWithExt = pathArr[pathArr.length - 1];
   // remove .app extension
-  return appNameWithExt.slice(0, appNameWithExt.length - 4);
+  return appNameWithExt.replace('.app', '');
 }
 
 async function getFilePatternArray(appName, bundleId) {
@@ -78,7 +76,6 @@ async function findAppFiles(appName) {
   try {
     const bundleId = await getBundleIdentifier(appName);
     const bundleIdComponents = bundleId.split('.');
-    const filesToRemove = new Set([]);
 
     const companyDirs = pathLocations.map((pathLocation) => `${pathLocation}/${bundleIdComponents[1]}`);
     const pathsToSearch = [...pathLocations, ...companyDirs];
@@ -86,6 +83,8 @@ async function findAppFiles(appName) {
     const directoryFiles = await Promise.allSettled(directoryFilesPromiseArr);
 
     const patternArray = await getFilePatternArray(appName, bundleId);
+
+    const filesToRemove = new Set([]);
 
     directoryFiles.forEach((dir, index) => {
       if (dir.status === 'fulfilled') {
@@ -132,35 +131,24 @@ function listItem(filePath, index) {
   fileList.appendChild(div);
 }
 
-async function isValidApp(appPath) {
-  const extension = appPath.slice(-4);
-  if (!extension === '.app') return false;
-  return true;
-}
+const isValidApp = (appPath) => path.extname(appPath) === '.app';
 
-function displayLoading() {
-  loadingContainer.style.display = 'flex';
-}
-
-function hideLoading() {
-  loadingContainer.style.display = 'none';
-}
-
-async function removeApp(appPath) {
-  displayLoading();
+async function appSelectionHandler(appPath) {
   clearList();
-  await isValidApp(appPath);
-  const appName = appNameFromPath(appPath);
+  if (isValidApp(appPath)) {
+    const appName = appNameFromPath(appPath);
 
-  appFiles = await findAppFiles(appName);
-  appFiles.forEach((filePath, i) => {
-    listItem(filePath, i);
-  });
+    const appFiles = await findAppFiles(appName);
+    appFiles.forEach((filePath, i) => {
+      listItem(filePath, i);
+    });
 
-  headerText.innerHTML = `${appName} (${appFiles.length} Files)`;
+    headerText.innerHTML = `${appName} (${appFiles.length} Files)`;
 
-  deleteButton.disabled = false;
-  hideLoading();
+    deleteButton.disabled = false;
+  } else {
+    ipcRenderer.send('handleError', 'Selected file is not a valid app');
+  }
 }
 
 deleteButton.addEventListener('click', async () => {
@@ -173,21 +161,18 @@ deleteButton.addEventListener('click', async () => {
   );
 
   if (confirmDialogResp.response === 0) {
-    document.getElementById('loadingContainer').style.display = 'flex';
-    document.getElementById('loadingText').innerHTML = 'deleting files...';
     moveFilesToTrash(selectedFiles);
     clearList();
-    document.getElementById('loadingContainer').style.display = 'none';
   }
 });
 
 clearButton.addEventListener('click', () => {
-  clearList(appFiles);
+  clearList();
 });
 
 dropZone.addEventListener('click', async () => {
   const selectedApp = await ipcRenderer.invoke('selectAppFromFinder');
-  if (selectedApp) removeApp(selectedApp);
+  if (selectedApp) appSelectionHandler(selectedApp);
 });
 
 dropZone.addEventListener('drop', (event) => {
@@ -198,7 +183,7 @@ dropZone.addEventListener('drop', (event) => {
 
   Object.keys(files).forEach((f) => {
     // Using the path attribute to get absolute file path
-    removeApp(files[`${f}`].path);
+    appSelectionHandler(files[`${f}`].path);
   });
 });
 
