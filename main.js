@@ -98,7 +98,7 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
-ipcMain.on('selectAppFromFinder', async () => {
+ipcMain.handle('selectAppFromFinder', async () => {
   try {
     const selection = await dialog.showOpenDialog({
       defaultPath: '/Applications',
@@ -111,10 +111,12 @@ ipcMain.on('selectAppFromFinder', async () => {
 
     if (!selection.canceled) {
       const selectedFilePath = selection.filePaths[0];
-      mainWindow.webContents.send('selectAppFromFinder', selectedFilePath);
+      return selectedFilePath;
     }
+    return false;
   } catch (err) {
     console.error(err);
+    throw err;
   }
 });
 

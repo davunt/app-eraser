@@ -44,22 +44,6 @@ async function moveFilesToTrash() {
   await execSync(`osascript -e "tell application \\"Finder\\" to delete { ${posixFile} } "`, spOptions).toString();
 }
 
-deleteButton.addEventListener('click', () => {
-  document.getElementById('loadingContainer').style.display = 'flex';
-  document.getElementById('loadingText').innerHTML = 'deleting files...';
-  moveFilesToTrash(appFiles);
-  clearList();
-  document.getElementById('loadingContainer').style.display = 'none';
-});
-
-clearButton.addEventListener('click', () => {
-  clearList(appFiles);
-});
-
-dropZone.addEventListener('click', () => {
-  ipcRenderer.send('selectAppFromFinder');
-});
-
 async function getBundleIdentifier(appName) {
   const bundleId = await execSync(`osascript -e 'id of app "${appName}"'`).toString();
 
@@ -183,6 +167,23 @@ async function removeApp(appPath) {
   hideLoading();
 }
 
+deleteButton.addEventListener('click', () => {
+  document.getElementById('loadingContainer').style.display = 'flex';
+  document.getElementById('loadingText').innerHTML = 'deleting files...';
+  moveFilesToTrash(appFiles);
+  clearList();
+  document.getElementById('loadingContainer').style.display = 'none';
+});
+
+clearButton.addEventListener('click', () => {
+  clearList(appFiles);
+});
+
+dropZone.addEventListener('click', async () => {
+  const selectedApp = await ipcRenderer.invoke('selectAppFromFinder');
+  if (selectedApp) removeApp(selectedApp);
+});
+
 dropZone.addEventListener('drop', (event) => {
   event.preventDefault();
   event.stopPropagation();
@@ -198,8 +199,4 @@ dropZone.addEventListener('drop', (event) => {
 dropZone.addEventListener('dragover', (e) => {
   e.preventDefault();
   e.stopPropagation();
-});
-
-ipcRenderer.on('selectAppFromFinder', (e, value) => {
-  removeApp(value);
 });
