@@ -16,12 +16,27 @@ const pathLocations = [
   `${homedir}/Library/Internet Plug-Ins`,
   `${homedir}/Library/LaunchAgents`,
   `${homedir}/Library/Logs`,
+  '/Library/Logs/DiagnosticReports',
   `${homedir}/Library/Preferences`,
   `${homedir}/Library/Preferences/ByHost`,
   `${homedir}/Library/Saved Application State`,
   `${homedir}/Library/WebKit`,
+  `${homedir}/Library/Caches/com.apple.helpd/Generated`,
+  '/Library/Audio/Plug-Ins/HAL',
+];
+
+const commonExtensions = [
+  '.app',
+  '.bom',
+  '.plist',
+  '.XPCHelper',
+  '.beta',
+  '.extensions',
+  '.savedState',
+  '.driver',
 ];
 
 module.exports = {
   pathLocations,
+  commonExtensions,
 };

@@ -4,13 +4,15 @@ const path = require('path');
 // eslint-disable-next-line security/detect-child-process
 const { execSync } = require('child_process');
 
-const { pathLocations } = require('../../utils/pathLocations');
+const { pathLocations, commonExtensions } = require('../../utils/pathLocations');
 
 const dropZone = document.getElementById('drag-drop-zone');
 const headerText = document.getElementById('files-header-title');
 const fileList = document.getElementById('files-list');
 const deleteButton = document.getElementById('delete-button');
 const clearButton = document.getElementById('clear-button');
+
+const scoreThreshold = 0.4;
 
 const getSelectedFiles = () => [...document.querySelectorAll('input[name=checkbox]:checked')].map((item) => item.value);
 
@@ -53,12 +55,22 @@ function appNameFromPath(appPath) {
 
 async function getFilePatternArray(appName, bundleId) {
   const appNameNorm = appName.toLowerCase().replace(' ', '');
+  const appNameUnderscore = appName.toLowerCase().replace(' ', '_');
+  const appNameDash = appName.toLowerCase().replace(' ', '-');
+  const appNameDot = appName.toLowerCase().replace(' ', '.');
   const bundleIdNorm = bundleId.toLowerCase().replace(' ', '');
 
-  const patternArray = [appNameNorm, bundleIdNorm];
+  let patternArray = [appNameNorm, appNameUnderscore, appNameDash, appNameDot, bundleIdNorm];
 
   const bundleIdComponents = bundleIdNorm.split('.');
-  if (bundleIdComponents.length > 2) patternArray.push(`${bundleIdComponents.slice(0, bundleIdComponents.length - 1).join('.')}`);
+
+  if (bundleIdComponents.length > 2 && bundleIdComponents[bundleIdComponents.length - 1].toLowerCase() === 'app') {
+    patternArray.push(`${bundleIdComponents.slice(0, bundleIdComponents.length - 1).join('.')}`);
+  }
+
+  const appExtensions = commonExtensions.map((extension) => `${appNameNorm}${extension}`);
+
+  patternArray = [...patternArray, ...appExtensions];
 
   return patternArray;
 }
@@ -66,7 +78,22 @@ async function getFilePatternArray(appName, bundleId) {
 function isPatternInFile(patterns, fileToCheck) {
   return patterns.find((filePatten) => {
     if (fileToCheck.includes(filePatten)) {
-      return true;
+      let score = 0;
+      const indexOfString = fileToCheck.indexOf(filePatten);
+      for (let i = 0; i < fileToCheck.length; i += 1) {
+        if (i === indexOfString) {
+          i += indexOfString + filePatten.length;
+          score += filePatten.length;
+        }
+        // eslint-disable-next-line no-restricted-globals
+        if (!isNaN(fileToCheck[parseInt(i, 10)])) score += 0.5;
+        if (fileToCheck[parseInt(i, 10)] === '.') score += 0.5;
+        if (fileToCheck[parseInt(i, 10)] === '_') score += 0.5;
+      }
+      if (score / fileToCheck.length > scoreThreshold) {
+        return true;
+      }
+      return false;
     }
     return false;
   });
@@ -75,6 +102,7 @@ function isPatternInFile(patterns, fileToCheck) {
 async function findAppFiles(appName) {
   try {
     const bundleId = await getBundleIdentifier(appName);
+    console.debug('bundleId', bundleId);
     const bundleIdComponents = bundleId.split('.');
 
     const companyDirs = pathLocations.map((pathLocation) => `${pathLocation}/${bundleIdComponents[1]}`);

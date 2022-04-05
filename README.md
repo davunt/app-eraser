@@ -24,7 +24,7 @@ NPM Scripts:
 
 - `npm start` - run the electron app
 - `npm run lint` - run eslint across all .js files
-- `npm run dist` - packages application as a .dmg
+- `npm run build` - packages application as a .dmg
 
 ### Project Structure
 `main.js` - the entry file for the application
