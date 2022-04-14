@@ -25,7 +25,8 @@ const pathLocations = [
   '/Library/Audio/Plug-Ins/HAL',
 ];
 
-const commonExtensions = [
+const commonSuffix = [
+  '.dmg',
   '.app',
   '.bom',
   '.plist',
@@ -34,9 +35,10 @@ const commonExtensions = [
   '.extensions',
   '.savedState',
   '.driver',
+  'install',
 ];
 
 module.exports = {
   pathLocations,
-  commonExtensions,
+  commonSuffix,
 };

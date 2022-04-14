@@ -4,7 +4,7 @@ const path = require('path');
 // eslint-disable-next-line security/detect-child-process
 const { execSync } = require('child_process');
 
-const { pathLocations, commonExtensions } = require('../../utils/pathLocations');
+const { pathLocations, commonSuffix } = require('../../utils/pathLocations');
 
 const dropZone = document.getElementById('drag-drop-zone');
 const headerText = document.getElementById('files-header-title');
@@ -53,27 +53,50 @@ function appNameFromPath(appPath) {
   return appNameWithExt.replace('.app', '');
 }
 
-async function getFilePatternArray(appName, bundleId) {
+function createNameVariations(appName, bundleId) {
   const appNameNorm = appName.toLowerCase().replace(' ', '');
+  const appNameWithoutDot = appNameNorm.toLowerCase().replace('.', '');
   const appNameUnderscore = appName.toLowerCase().replace(' ', '_');
   const appNameDash = appName.toLowerCase().replace(' ', '-');
   const appNameDot = appName.toLowerCase().replace(' ', '.');
+
   const bundleIdNorm = bundleId.toLowerCase().replace(' ', '');
 
-  let patternArray = [appNameNorm, appNameUnderscore, appNameDash, appNameDot, bundleIdNorm];
+  return [
+    appNameNorm,
+    appNameWithoutDot,
+    appNameUnderscore,
+    appNameDash,
+    appNameDot,
+    bundleIdNorm,
+  ];
+}
+
+async function getFilePatternArray(appName, bundleId) {
+  const nameVariations = createNameVariations(appName, bundleId);
+  const appNameNorm = appName.toLowerCase().replace(' ', '');
+  const bundleIdNorm = bundleId.toLowerCase().replace(' ', '');
+
+  let patternArray = [...nameVariations];
+
+  const appNameComponents = appNameNorm.split('.');
+  if (appNameComponents) patternArray.push(appNameComponents[0]);
 
   const bundleIdComponents = bundleIdNorm.split('.');
-
   if (bundleIdComponents.length > 2 && bundleIdComponents[bundleIdComponents.length - 1].toLowerCase() === 'app') {
     patternArray.push(`${bundleIdComponents.slice(0, bundleIdComponents.length - 1).join('.')}`);
   }
 
-  const appExtensions = commonExtensions.map((extension) => `${appNameNorm}${extension}`);
+  const appWithSuffix = new Set([]);
+  commonSuffix.forEach((suffix) => nameVariations.forEach((nameVariation) => appWithSuffix.add(`${nameVariation}${suffix}`)));
 
-  patternArray = [...patternArray, ...appExtensions];
+  patternArray = [...patternArray, [...appWithSuffix]];
 
   return patternArray;
 }
+
+const uuidReg = /[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}/;
+const dateReg = /[0-9]{4}-[0-9]{2}-[0-9]{2}/;
 
 function isPatternInFile(patterns, fileToCheck) {
   return patterns.find((filePatten) => {
@@ -85,10 +108,17 @@ function isPatternInFile(patterns, fileToCheck) {
           i += indexOfString + filePatten.length;
           score += filePatten.length;
         }
-        // eslint-disable-next-line no-restricted-globals
-        if (!isNaN(fileToCheck[parseInt(i, 10)])) score += 0.5;
+
         if (fileToCheck[parseInt(i, 10)] === '.') score += 0.5;
         if (fileToCheck[parseInt(i, 10)] === '_') score += 0.5;
+
+        // filename contains uuid
+        const fileUUID = fileToCheck.match(uuidReg);
+        if (fileUUID) score += fileUUID.length;
+
+        // filename contains date
+        const fileDate = fileToCheck.match(dateReg);
+        if (fileDate) score += fileDate.length;
       }
       if (score / fileToCheck.length > scoreThreshold) {
         return true;
