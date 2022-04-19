@@ -5,6 +5,7 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 const { pathLocations, commonSuffix } = require('../../utils/pathLocations');
+const { fileRegex } = require('../../utils/fileRegex');
 
 const dropZone = document.getElementById('drag-drop-zone');
 const headerText = document.getElementById('files-header-title');
@@ -42,8 +43,16 @@ async function moveFilesToTrash() {
 
 async function getBundleIdentifier(appName) {
   const bundleId = await execSync(`osascript -e 'id of app "${appName}"'`).toString();
+  console.log('bundleId', bundleId);
   // remove empty space at end of string
   return bundleId.substring(0, bundleId.length - 1);
+}
+
+async function getComputerName() {
+  const compName = await execSync('scutil --get ComputerName').toString();
+  console.log('compName', compName);
+  // remove empty space at end of string
+  return compName.substring(0, compName.length - 1);
 }
 
 function appNameFromPath(appPath) {
@@ -72,10 +81,12 @@ function createNameVariations(appName, bundleId) {
   ];
 }
 
+const normalizeString = (str, spacer = '') => str.toLowerCase().replace(/ /g, spacer);
+
 async function getFilePatternArray(appName, bundleId) {
   const nameVariations = createNameVariations(appName, bundleId);
-  const appNameNorm = appName.toLowerCase().replace(' ', '');
-  const bundleIdNorm = bundleId.toLowerCase().replace(' ', '');
+  const appNameNorm = normalizeString(appName);
+  const bundleIdNorm = normalizeString(bundleId);
 
   let patternArray = [...nameVariations];
 
@@ -95,32 +106,39 @@ async function getFilePatternArray(appName, bundleId) {
   return patternArray;
 }
 
-const uuidReg = /[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}/;
-const dateReg = /[0-9]{4}-[0-9]{2}-[0-9]{2}/;
+let compNameGlob;
+
+function stripString(file) {
+  let transformedString = file;
+  fileRegex.forEach((regex1) => {
+    transformedString = transformedString.replace(regex1, '');
+  });
+
+  const normCompName = normalizeString(compNameGlob, '-')
+    .replace(/\u2019/g, '')
+    .replace(/\(/g, '')
+    .replace(/\)/g, '');
+
+  transformedString = transformedString.replace(normCompName, '');
+  return transformedString;
+}
 
 function isPatternInFile(patterns, fileToCheck) {
   return patterns.find((filePatten) => {
     if (fileToCheck.includes(filePatten)) {
+      const strippedFile = stripString(fileToCheck);
+
       let score = 0;
-      const indexOfString = fileToCheck.indexOf(filePatten);
-      for (let i = 0; i < fileToCheck.length; i += 1) {
+      const indexOfString = strippedFile.indexOf(filePatten);
+      for (let i = 0; i < strippedFile.length; i += 1) {
         if (i === indexOfString) {
           i += indexOfString + filePatten.length;
           score += filePatten.length;
         }
-
-        if (fileToCheck[parseInt(i, 10)] === '.') score += 0.5;
-        if (fileToCheck[parseInt(i, 10)] === '_') score += 0.5;
-
-        // filename contains uuid
-        const fileUUID = fileToCheck.match(uuidReg);
-        if (fileUUID) score += fileUUID.length;
-
-        // filename contains date
-        const fileDate = fileToCheck.match(dateReg);
-        if (fileDate) score += fileDate.length;
+        if (strippedFile[parseInt(i, 10)] === '.') score += 0.5;
+        if (strippedFile[parseInt(i, 10)] === '_') score += 0.5;
       }
-      if (score / fileToCheck.length > scoreThreshold) {
+      if (score / strippedFile.length > scoreThreshold) {
         return true;
       }
       return false;
@@ -132,6 +150,7 @@ function isPatternInFile(patterns, fileToCheck) {
 async function findAppFiles(appName) {
   try {
     const bundleId = await getBundleIdentifier(appName);
+    compNameGlob = await getComputerName();
     console.debug('bundleId', bundleId);
     const bundleIdComponents = bundleId.split('.');
 

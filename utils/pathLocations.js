@@ -26,15 +26,6 @@ const pathLocations = [
 ];
 
 const commonSuffix = [
-  '.dmg',
-  '.app',
-  '.bom',
-  '.plist',
-  '.XPCHelper',
-  '.beta',
-  '.extensions',
-  '.savedState',
-  '.driver',
   'install',
 ];
 

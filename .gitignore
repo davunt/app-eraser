@@ -1,6 +1,7 @@
 #directories
 node_modules
 dist
+scripts
 
 #files
 *.tgz
