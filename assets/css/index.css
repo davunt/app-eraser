@@ -118,7 +118,7 @@ button {
   text-align: center;
   text-decoration: none;
   font-size: 15px;
-  padding: 5px;
+  padding: 5px 20px 5px 20px;
   border-radius: 3px;
 }
 

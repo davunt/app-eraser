@@ -3,15 +3,19 @@ const fs = require('fs/promises');
 const path = require('path');
 // eslint-disable-next-line security/detect-child-process
 const { execSync } = require('child_process');
+const fileIcon = require('file-icon');
 
 const { pathLocations, commonSuffix } = require('../../utils/pathLocations');
 const { fileRegex } = require('../../utils/fileRegex');
 
 const dropZone = document.getElementById('drag-drop-zone');
-const headerText = document.getElementById('files-header-title');
+const dropZoneText = document.getElementById('drag-drop-zone-text');
+const dropZoneImage = document.getElementById('drag-drop-zone-image');
 const fileList = document.getElementById('files-list');
 const deleteButton = document.getElementById('delete-button');
 const clearButton = document.getElementById('clear-button');
+
+const addFileImage = '../../assets/img/add_files.svg';
 
 const scoreThreshold = 0.4;
 
@@ -25,8 +29,9 @@ const removeChildren = (parent) => {
 
 function clearList() {
   removeChildren(fileList);
+  dropZoneText.innerHTML = 'Drop Apps Here or Click To Select';
+  dropZoneImage.src = addFileImage;
   deleteButton.disabled = true;
-  headerText.innerHTML = 'Related Files';
 }
 
 async function moveFilesToTrash() {
@@ -147,11 +152,14 @@ function isPatternInFile(patterns, fileToCheck) {
   });
 }
 
-async function findAppFiles(appName) {
+async function getAppIcon(bundleId) {
+  const iconBuffer = await fileIcon.buffer(bundleId);
+  return iconBuffer;
+}
+
+async function findAppFiles(appName, bundleId) {
   try {
-    const bundleId = await getBundleIdentifier(appName);
     compNameGlob = await getComputerName();
-    console.debug('bundleId', bundleId);
     const bundleIdComponents = bundleId.split('.');
 
     const companyDirs = pathLocations.map((pathLocation) => `${pathLocation}/${bundleIdComponents[1]}`);
@@ -202,6 +210,9 @@ function listItem(filePath, index) {
 
   const label = document.createElement('label');
   label.htmlFor = 'checkbox';
+  label.style['word-wrap'] = 'break-word';
+  label.style['max-width'] = '500px';
+
   label.appendChild(document.createTextNode(filePath));
   div.append(inp);
   div.appendChild(label);
@@ -214,15 +225,18 @@ async function appSelectionHandler(appPath) {
   clearList();
   if (isValidApp(appPath)) {
     const appName = appNameFromPath(appPath);
+    const bundleId = await getBundleIdentifier(appName);
+    const appIconBuffer = await getAppIcon(bundleId);
 
-    const appFiles = await findAppFiles(appName);
+    const appFiles = await findAppFiles(appName, bundleId);
     appFiles.forEach((filePath, i) => {
       listItem(filePath, i);
     });
 
-    headerText.innerHTML = `${appName} (${appFiles.length} Files)`;
-
+    dropZoneText.innerHTML = `${appName} (${appFiles.length} Files)`;
+    clearButton.style.display = 'block';
     deleteButton.disabled = false;
+    dropZoneImage.src = `data:image/png;base64,${appIconBuffer.toString('base64')}`;
   } else {
     ipcRenderer.send('handleError', 'Selected file is not a valid app');
   }
@@ -247,10 +261,12 @@ clearButton.addEventListener('click', () => {
   clearList();
 });
 
-dropZone.addEventListener('click', async () => {
+async function openAppSelector() {
   const selectedApp = await ipcRenderer.invoke('selectAppFromFinder');
   if (selectedApp) appSelectionHandler(selectedApp);
-});
+}
+
+dropZone.addEventListener('click', openAppSelector);
 
 dropZone.addEventListener('drop', (event) => {
   event.preventDefault();
