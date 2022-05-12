@@ -21,6 +21,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1000,
     height: 500,
+    titleBarStyle: 'hidden',
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -39,6 +40,7 @@ function createAboutWindow() {
   const aboutWindow = new BrowserWindow({
     width: 500,
     height: 400,
+    titleBarStyle: 'hidden',
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,

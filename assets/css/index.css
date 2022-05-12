@@ -1,13 +1,18 @@
+:root {
+  --primary: #292827;
+  --primaryDark: #1c1b1b;
+  --primaryLight: #363533;
+}
+
 html, body {
   margin: 0;
-  background-color: #2e2c2d;
+  background-color: var(--primary);
   height: 100%;
   color:rgba(255, 255, 255, 0.8);
   font-family: Helvetica;
 }
 
 .grid-container {
-  background-color: #2e2c2d;
   display: flex;
   flex: 1;
   height: 100%;
@@ -18,42 +23,59 @@ html, body {
   z-index: 1;
   display: flex;
   flex: 1;
-  background-color: #2e2c2d;
-  padding: 20px;
+  background-color: var(--primary);
 }
 
-.drag-drop-grid-item:hover {
+#drag-drop-title-bar {
+  margin-bottom: 0px;
+  margin: 0;
+  padding: 10px;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+}
+
+#drag-drop-zone {
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  /* dashed border */
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='20' ry='20' stroke='%23FFFFFFCC' stroke-width='5' stroke-dasharray='20%2c 20' stroke-dashoffset='5' stroke-linecap='square'/%3e%3c/svg%3e");
+  border-radius: 20px;
+}
+
+#drag-drop-zone:hover {
   display: flex;
   flex: 1;
   background-color: #3b383a;
   padding: 20px;
 }
 
-#drag-drop-zone {
+#drag-drop-column {
   display: flex;
-  flex-direction: column;
   flex: 1;
-  text-align: center;
-  padding: 20px;
-  border: 2px dashed;
-  border-radius: 10px;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
 }
 
 .files-grid-item {
   display: flex;
   flex: 2;
   flex-direction: column;
-  background-color: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(0, 0, 0, 0.8);
+  background-color: var(--primaryLight);
 }
+
 .files-container-header{
   display: flex;
   flex-direction: row;
-  background-color: #2e2c2d;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+  background-color: var(--primary);
   align-items: center;
 }
+
 .files-header-title{
   font-size: 18px;
   margin-left: 10px;
@@ -63,7 +85,7 @@ html, body {
   position: fixed;
   bottom: 0;
   width: 100%;
-  background-color: #2e2c2d;
+  background-color: var(--primary);
   padding: 10px;
 }
 
@@ -84,13 +106,13 @@ html, body {
 }
 
 .fileItem1{
-  background-color: #212020;
+  background-color: var(--primaryDark);
   margin: 0;
   padding: 10px;
 }
 
 .fileItem2{
-  background-color: #3b383a;
+  background-color: var(--primaryLight);
   margin: 0;
   padding: 10px;
 }
@@ -134,9 +156,4 @@ button {
 button:enabled:hover {
   background-color: rgba(200, 200, 200, 0.8);
   color:rgba(255, 255, 255, 0.8);
-}
-
-input[type=checkbox] {
-  background-color: #E91E63;
-  color: #E91E63;
 }
