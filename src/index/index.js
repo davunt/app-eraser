@@ -1,4 +1,5 @@
 const { ipcRenderer } = require('electron');
+const os = require('os');
 const fs = require('fs/promises');
 const path = require('path');
 // eslint-disable-next-line security/detect-child-process
@@ -15,9 +16,11 @@ const fileList = document.getElementById('files-list');
 const deleteButton = document.getElementById('delete-button');
 const clearButton = document.getElementById('clear-button');
 
+const filesImage = '../../assets/img/files.svg';
 const addFileImage = '../../assets/img/add_files.svg';
 
 const scoreThreshold = 0.4;
+const mojaveDarwinMinVersion = '18.0.0';
 
 const getSelectedFiles = () => [...document.querySelectorAll('input[name=checkbox]:checked')].map((item) => item.value);
 
@@ -226,7 +229,12 @@ async function appSelectionHandler(appPath) {
   if (isValidApp(appPath)) {
     const appName = appNameFromPath(appPath);
     const bundleId = await getBundleIdentifier(appName);
-    const appIconBuffer = await getAppIcon(bundleId);
+    if (os.release() > mojaveDarwinMinVersion) {
+      const appIconBuffer = await getAppIcon(bundleId);
+      dropZoneImage.src = `data:image/png;base64,${appIconBuffer.toString('base64')}`;
+    } else {
+      dropZoneImage.src = filesImage;
+    }
 
     const appFiles = await findAppFiles(appName, bundleId);
     appFiles.forEach((filePath, i) => {
@@ -236,7 +244,6 @@ async function appSelectionHandler(appPath) {
     dropZoneText.innerHTML = `${appName} (${appFiles.length} Files)`;
     clearButton.style.display = 'block';
     deleteButton.disabled = false;
-    dropZoneImage.src = `data:image/png;base64,${appIconBuffer.toString('base64')}`;
   } else {
     ipcRenderer.send('handleError', 'Selected file is not a valid app');
   }

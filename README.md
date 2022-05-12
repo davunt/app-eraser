@@ -1,8 +1,15 @@
 # App Eraser - macOS App Removal Tool
+App Eraser helps remove unwanted macOS applications and any related files that they leave behind.
+
 App Eraser is Free/Libre and Open Source.
 
 ## ⬇ Install
 You can download the latest version from the [releases page](https://github.com/davunt/app-eraser/releases).
+
+### Installation Issues
+'App Eraser can't be opened because it is from an unidentified developer'
+1. In the Finder on your Mac, locate the 'App Eraser' app in 'Applications' folder. (Not Launchpad)
+2. Control-click the app icon, then choose Open from the shortcut menu.
 
 ## 🤷 Why?
 When deleting apps in macOS, many related files are left behind, taking up space on your hard drive. App Eraser helps to find these files and provides a quick and easy way to delete them.
