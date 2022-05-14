@@ -16,6 +16,7 @@ const fileList = document.getElementById('files-list');
 const deleteButton = document.getElementById('delete-button');
 const clearButton = document.getElementById('clear-button');
 const loadingContainer = document.getElementById('loading-container');
+const filesHeaderTitle = document.getElementById('files-header-title');
 
 const filesImage = '../../assets/img/files.svg';
 const addFileImage = '../../assets/img/add_files.svg';
@@ -34,6 +35,7 @@ const removeChildren = (parent) => {
 function clearList() {
   removeChildren(fileList);
   dropZoneText.innerHTML = 'Drop Apps Here or Click To Select';
+  filesHeaderTitle.innerHTML = 'Related Files';
   dropZoneImage.src = addFileImage;
   deleteButton.disabled = true;
 }
@@ -243,7 +245,8 @@ async function appSelectionHandler(appPath) {
       listItem(filePath, i);
     });
 
-    dropZoneText.innerHTML = `${appName} (${appFiles.length} Files)`;
+    dropZoneText.innerHTML = `${appName}`;
+    filesHeaderTitle.innerHTML = `Related Files (${appFiles.length} Files)`;
     clearButton.style.display = 'block';
     deleteButton.disabled = false;
   } else {
