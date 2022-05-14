@@ -2,6 +2,7 @@
   --primary: #292827;
   --primaryDark: #1c1b1b;
   --primaryLight: #363533;
+  --lightGrey: #f3f3f3;
 }
 
 html, body {
@@ -117,10 +118,11 @@ html, body {
   padding: 10px;
 }
 
-#loadingContainer {
+#loading-container {
   display: none;
   justify-content: center;
   align-items: center;
+  align-content: center;
   position: fixed;
   background-color: rgba(0, 0, 0, 0.8);
   width: 100%;
@@ -129,8 +131,18 @@ html, body {
   color: 'orange';
 }
 
-#loadingText {
-  color: #E91E63;
+.loader {
+  border: 10px solid var(--lightGrey);
+  border-top: 10px solid var(--primary);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 button {

@@ -11,6 +11,8 @@ const commonExtensions = [
   '.extensions',
   '.savedState',
   '.driver',
+  '.wakeups_resource',
+  '.diag',
 ];
 
 module.exports = {

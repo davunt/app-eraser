@@ -15,6 +15,7 @@ const dropZoneImage = document.getElementById('drag-drop-zone-image');
 const fileList = document.getElementById('files-list');
 const deleteButton = document.getElementById('delete-button');
 const clearButton = document.getElementById('clear-button');
+const loadingContainer = document.getElementById('loading-container');
 
 const filesImage = '../../assets/img/files.svg';
 const addFileImage = '../../assets/img/add_files.svg';
@@ -225,6 +226,7 @@ function listItem(filePath, index) {
 const isValidApp = (appPath) => path.extname(appPath) === '.app';
 
 async function appSelectionHandler(appPath) {
+  loadingContainer.style.display = 'flex';
   clearList();
   if (isValidApp(appPath)) {
     const appName = appNameFromPath(appPath);
@@ -247,6 +249,7 @@ async function appSelectionHandler(appPath) {
   } else {
     ipcRenderer.send('handleError', 'Selected file is not a valid app');
   }
+  loadingContainer.style.display = 'none';
 }
 
 deleteButton.addEventListener('click', async () => {
@@ -269,8 +272,10 @@ clearButton.addEventListener('click', () => {
 });
 
 async function openAppSelector() {
+  loadingContainer.style.display = 'flex';
   const selectedApp = await ipcRenderer.invoke('selectAppFromFinder');
   if (selectedApp) appSelectionHandler(selectedApp);
+  else loadingContainer.style.display = 'none';
 }
 
 dropZone.addEventListener('click', openAppSelector);
