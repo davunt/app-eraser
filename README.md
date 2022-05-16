@@ -4,8 +4,8 @@
 
 ![Mac OS](https://img.shields.io/badge/mac%20os-000000?style=flat-square&logo=macos&logoColor=F0F0F0)
 [![Licence](https://img.shields.io/github/license/davunt/app-eraser?style=flat-square)](./LICENSE)
-![App Eraser Twitter](https://img.shields.io/twitter/url?label=@AppEraser&style=social&url=https%3A%2F%2Ftwitter.com%2FAppEraser)
-![Davunt](https://img.shields.io/twitter/url?label=@davunt_&style=social&url=https%3A%2F%2Ftwitter.com%2Fdavunt_)
+[![App Eraser Twitter](https://img.shields.io/twitter/url?label=@AppEraser&style=social&url=https%3A%2F%2Ftwitter.com%2FAppEraser)](https://twitter.com/AppEraser)
+[![Davunt Twitter](https://img.shields.io/twitter/url?label=@davunt_&style=social&url=https%3A%2F%2Ftwitter.com%2Fdavunt_)](https://twitter.com/davunt_)
 
 App Eraser helps remove unwanted macOS applications and any related files that they leave behind.
 
