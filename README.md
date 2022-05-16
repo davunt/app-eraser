@@ -1,7 +1,18 @@
-# App Eraser - macOS App Removal Tool
+<h1 align="center">App Eraser - macOS App Removal Tool</h1>
+
+<div align="center">
+
+![Mac OS](https://img.shields.io/badge/mac%20os-000000?style=flat-square&logo=macos&logoColor=F0F0F0)
+[![Licence](https://img.shields.io/github/license/davunt/app-eraser?style=flat-square)](./LICENSE)
+![App Eraser Twitter](https://img.shields.io/twitter/url?label=@AppEraser&style=social&url=https%3A%2F%2Ftwitter.com%2FAppEraser)
+![Davunt](https://img.shields.io/twitter/url?label=@davunt_&style=social&url=https%3A%2F%2Ftwitter.com%2Fdavunt_)
+
+</div>
+
+
 App Eraser helps remove unwanted macOS applications and any related files that they leave behind.
 
-App Eraser is Free/Libre and Open Source.
+![App Screenshot](assets/img/appScreenshot.png)
 
 ## ⬇ Install
 You can download the latest version from the [releases page](https://github.com/davunt/app-eraser/releases).
