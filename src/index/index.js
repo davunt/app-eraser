@@ -19,7 +19,6 @@ const loadingContainer = document.getElementById('loading-container');
 const filesHeaderTitle = document.getElementById('files-header-title');
 
 const filesImage = '../../assets/img/files.svg';
-const addFileImage = '../../assets/img/add_files.svg';
 
 const scoreThreshold = 0.4;
 const mojaveDarwinMinVersion = '18.0.0';
