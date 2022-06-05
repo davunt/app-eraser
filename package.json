@@ -7,7 +7,8 @@
   "license": "ISC",
   "build": {
     "productName": "App Eraser",
-    "appId": "com.apperaser.app"
+    "appId": "com.apperaser.app",
+    "publish": ["github"]
   },
   "scripts": {
     "start": "export NODE_ENV=development&&electron .",
