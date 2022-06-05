@@ -58,6 +58,23 @@ function createAboutWindow() {
   });
 }
 
+function createPermissionErrorWindow() {
+  const permissionErrorWindow = new BrowserWindow({
+    width: 500,
+    height: 400,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+  });
+
+  permissionErrorWindow.loadFile('src/permissions/index.html');
+
+  if (env === 'development') {
+    permissionErrorWindow.webContents.openDevTools();
+  }
+}
+
 const mainMenuTemplate = [
   {
     label: app.name,
@@ -84,6 +101,12 @@ const mainMenuTemplate = [
         label: 'Report Issue',
         click() {
           shell.openExternal(issuesURL);
+        },
+      },
+      {
+        label: 'Permissions',
+        click() {
+          createPermissionErrorWindow();
         },
       },
       {

@@ -19,6 +19,7 @@ const loadingContainer = document.getElementById('loading-container');
 const filesHeaderTitle = document.getElementById('files-header-title');
 
 const filesImage = '../../assets/img/files.svg';
+const addFileImage = '../../assets/img/add_files.svg';
 
 const scoreThreshold = 0.4;
 const mojaveDarwinMinVersion = '18.0.0';
@@ -40,15 +41,25 @@ function clearList() {
 }
 
 async function moveFilesToTrash() {
-  const selectedFiles = getSelectedFiles();
+  try {
+    const selectedFiles = getSelectedFiles();
 
-  const spOptions = {
-    name: 'App Eraser',
-  };
+    const spOptions = {
+      name: 'App Eraser',
+    };
 
-  const posixFile = `POSIX file \\"${selectedFiles.join('\\", POSIX file \\"')}\\"`;
+    const posixFile = `POSIX file \\"${selectedFiles.join('\\", POSIX file \\"')}\\"`;
 
-  await execSync(`osascript -e "tell application \\"Finder\\" to delete { ${posixFile} } "`, spOptions).toString();
+    await execSync(`osascript -e "tell application \\"Finder\\" to delete { ${posixFile} } "`, spOptions).toString();
+    clearList();
+  } catch (err) {
+    console.error(err);
+    ipcRenderer.send(
+      'handleError',
+      `Please update your permissions in System Preferences > Security and Privacy > Privacy > Automation and enable the Finder permission for App Eraser.
+      \r\nYou can learn more about permissions in the Permissions screen under Help in the tool bar.`,
+    );
+  }
 }
 
 async function getBundleIdentifier(appName) {
@@ -265,7 +276,6 @@ deleteButton.addEventListener('click', async () => {
 
   if (confirmDialogResp.response === 0) {
     moveFilesToTrash(selectedFiles);
-    clearList();
   }
 });
 
