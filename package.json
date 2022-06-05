@@ -1,6 +1,6 @@
 {
   "name": "app-eraser",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "",
   "main": "main.js",
   "author": "David H",
@@ -8,7 +8,9 @@
   "build": {
     "productName": "App Eraser",
     "appId": "com.apperaser.app",
-    "publish": ["github"]
+    "publish": [
+      "github"
+    ]
   },
   "scripts": {
     "start": "export NODE_ENV=development&&electron .",
