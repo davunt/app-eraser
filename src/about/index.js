@@ -1,11 +1,16 @@
 const { ipcRenderer } = require('electron');
-const { githubRepoURL, maintainerTwitterURL } = require('../../utils/constants');
+const { appRepoURL, appTwitterURL, maintainerTwitterURL } = require('../../utils/constants');
 
-const githubRepoIcon = document.getElementById('githubIcon');
-const maintainerTwitterIcon = document.getElementById('twitterIcon');
+const appRepoIcon = document.getElementById('appRepoIcon');
+const appTwitterIcon = document.getElementById('appTwitterIcon');
+const maintainerTwitterIcon = document.getElementById('maintainerTwitterIcon');
 
-githubRepoIcon.addEventListener('click', () => {
-  ipcRenderer.send('openURL', githubRepoURL);
+appRepoIcon.addEventListener('click', () => {
+  ipcRenderer.send('openURL', appRepoURL);
+});
+
+appTwitterIcon.addEventListener('click', () => {
+  ipcRenderer.send('openURL', appTwitterURL);
 });
 
 maintainerTwitterIcon.addEventListener('click', () => {
