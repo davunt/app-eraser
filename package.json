@@ -21,7 +21,7 @@
     "lint": "eslint .",
     "dist": "npm version patch && npm run build",
     "build": "npm run clean && npm run release",
-    "release": "electron-builder",
+    "release": "electron-builder -p onTag",
     "clean": "rm -rf dist",
     "version": "git add -A",
     "postversion": "git push && git push --tags"
