@@ -1,20 +1,27 @@
 {
   "name": "app-eraser",
-  "version": "0.0.7",
+  "version": "0.0.13",
   "description": "",
   "main": "main.js",
   "author": "David H",
   "license": "ISC",
   "build": {
     "productName": "App Eraser",
-    "appId": "com.apperaser.app"
+    "appId": "com.apperaser.app",
+    "publish": [
+      {
+        "provider": "github",
+        "releaseType": "prerelease"
+      }
+    ]
   },
   "scripts": {
     "start": "export NODE_ENV=development&&electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
-    "dist": "npm version patch && npm run build",
+    "dist": "npm version patch && npm run release",
     "build": "npm run clean && electron-builder",
+    "release": "npm run clean && electron-builder -p always",
     "clean": "rm -rf dist",
     "version": "git add -A",
     "postversion": "git push && git push --tags"

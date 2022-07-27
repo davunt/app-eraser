@@ -2,7 +2,7 @@ const { ipcRenderer } = require('electron');
 const os = require('os');
 const fs = require('fs/promises');
 const path = require('path');
-// eslint-disable-next-line security/detect-child-process
+
 const { execSync } = require('child_process');
 const fileIcon = require('file-icon');
 
