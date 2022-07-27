@@ -20,7 +20,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
     "dist": "npm version patch && npm run build",
-    "build": "npm run clean && electron-builder -p onTag",
+    "build": "npm run clean && npm run release",
+    "release": "electron-builder",
     "clean": "rm -rf dist",
     "version": "git add -A",
     "postversion": "git push && git push --tags"
