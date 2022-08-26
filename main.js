@@ -2,6 +2,7 @@
 const {
   app, Menu, BrowserWindow, dialog, ipcMain, shell,
 } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const { issuesURL } = require('./utils/constants');
 
@@ -34,6 +35,10 @@ function createWindow() {
   if (env === 'development') {
     mainWindow.webContents.openDevTools();
   }
+
+  mainWindow.once('ready-to-show', () => {
+    autoUpdater.checkForUpdatesAndNotify();
+  });
 }
 
 function createAboutWindow() {
@@ -97,6 +102,12 @@ const mainMenuTemplate = [
   {
     label: 'Help',
     submenu: [
+      {
+        label: 'Check For Updates',
+        click() {
+          shell.openExternal(issuesURL);
+        },
+      },
       {
         label: 'Report Issue',
         click() {

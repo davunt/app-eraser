@@ -23,6 +23,7 @@
     "lint"
   ],
   "dependencies": {
+    "electron-updater": "^5.2.1",
     "file-icon": "^4.0.0"
   },
   "devDependencies": {
