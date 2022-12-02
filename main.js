@@ -4,7 +4,7 @@ const {
 } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
-const { issuesURL } = require('./utils/constants');
+const { issuesURL, releasesURL } = require('./utils/constants');
 
 const env = process.env.NODE_ENV;
 if (env === 'development') {
@@ -105,7 +105,7 @@ const mainMenuTemplate = [
       {
         label: 'Check For Updates',
         click() {
-          shell.openExternal(issuesURL);
+          shell.openExternal(releasesURL);
         },
       },
       {

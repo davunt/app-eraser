@@ -20,6 +20,14 @@ You can download the latest version from the [releases page](https://github.com/
 1. In the Finder on your Mac, locate the 'App Eraser' app in 'Applications' folder. (Not Launchpad)
 2. Control-click the app icon, then choose Open from the shortcut menu.
 
+### Permissions
+App Eraser requires some permissions in order to find and move files to trash.
+If you feel App Eraser is not correctly working please take a look at the settings below:
+1. Go to `System Preferences` > `Security and Privacy` > `Privacy`
+2. Enable the following permissions:
+ * Enable `Finder` access in the `Automation`section. This allows App Eraser to move files to trash
+* Enable the folders you want to allow App Eraser to search in `Files and Folders`
+
 ## 🤷 Why?
 When deleting apps in macOS, many related files are left behind, taking up space on your hard drive. App Eraser helps to find these files and provides a quick and easy way to delete them.
 
@@ -51,5 +59,5 @@ NPM Scripts:
 
 `utils` - functions or constants used across the application
 
-### ESLint
+#### ESLint
 ESLint is used to analyze code to find issues and to enforce coding style. The ESLint config can be found in `.eslintrc.js`.

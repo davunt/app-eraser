@@ -244,8 +244,12 @@ async function appSelectionHandler(appPath) {
     const appName = appNameFromPath(appPath);
     const bundleId = await getBundleIdentifier(appName);
     if (os.release() > mojaveDarwinMinVersion) {
-      const appIconBuffer = await getAppIcon(bundleId);
-      dropZoneImage.src = `data:image/png;base64,${appIconBuffer.toString('base64')}`;
+      try {
+        const appIconBuffer = await getAppIcon(bundleId);
+        dropZoneImage.src = `data:image/png;base64,${appIconBuffer.toString('base64')}`;
+      } catch (err) {
+        dropZoneImage.src = filesImage;
+      }
     } else {
       dropZoneImage.src = filesImage;
     }
