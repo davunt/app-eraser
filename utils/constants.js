@@ -1,10 +1,5 @@
-const appRepoURL = 'https://github.com/davunt/app-eraser';
-const issuesURL = 'https://github.com/davunt/app-eraser/issues';
-const maintainerTwitterURL = 'https://twitter.com/davunt_';
-
 module.exports = {
-  appRepoURL,
-  appTwitterURL: 'https://twitter.com/AppEraser',
-  issuesURL,
-  maintainerTwitterURL,
+  appRepoURL: 'https://github.com/davunt/app-eraser',
+  issuesURL: 'https://github.com/davunt/app-eraser/issues',
+  releasesURL: 'https://github.com/davunt/app-eraser/releases',
 };
