@@ -3,6 +3,7 @@ node_modules
 dist
 scripts
 build
+.vscode
 
 #files
 *.tgz
