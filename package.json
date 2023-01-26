@@ -2,7 +2,7 @@
   "name": "app-eraser",
   "version": "0.0.19",
   "description": "",
-  "main": "main.js",
+  "main": "app.js",
   "author": "David H",
   "license": "ISC",
   "build": {
@@ -17,7 +17,7 @@
   },
   "scripts": {
     "start": "export NODE_ENV=development&&electron .",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "lint": "eslint .",
     "dist": "npm version patch && npm run release",
     "build": "npm run clean && electron-builder",
@@ -41,6 +41,7 @@
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-security": "^1.4.0",
+    "jest": "^29.3.1",
     "pre-commit": "^1.2.2"
   }
 }

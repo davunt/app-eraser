@@ -29,8 +29,8 @@ function createWindow() {
     },
   });
 
-  // and load the index.html of the app.
-  mainWindow.loadFile('src/index/index.html');
+  // and load the main/index.html of the app.
+  mainWindow.loadFile('src/main/index.html');
 
   if (env === 'development') {
     mainWindow.webContents.openDevTools();

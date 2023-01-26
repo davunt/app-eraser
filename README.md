@@ -51,7 +51,7 @@ NPM Scripts:
 - `npm run build` - packages application as a .dmg
 
 ### Project Structure
-`main.js` - the entry file for the application
+`app.js` - the entry file for the application
 
 `assets` - all styling configuration (CSS) and images used in the application
 
