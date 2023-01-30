@@ -5,6 +5,7 @@ const path = require('path');
 const { execSync } = require('child_process');
 const fileIcon = require('file-icon');
 
+const { mojaveDarwinMinVersion } = require('../../utils/config');
 const { findAppFiles } = require('./index');
 
 const dropZone = document.getElementById('drag-drop-zone');
@@ -18,8 +19,6 @@ const filesHeaderTitle = document.getElementById('files-header-title');
 
 const filesImage = '../../assets/img/files.svg';
 const addFileImage = '../../assets/img/add_files.svg';
-
-const mojaveDarwinMinVersion = '18.0.0';
 
 const isValidApp = (appPath) => path.extname(appPath) === '.app';
 

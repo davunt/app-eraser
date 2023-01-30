@@ -1,66 +1,55 @@
 const fs = require('fs/promises');
 const { execSync } = require('child_process');
 
+const { scoreThreshold } = require('../../utils/config');
 const { fileRegex } = require('../../utils/fileRegex');
-const { pathLocations, commonSuffix } = require('../../utils/pathLocations');
+const { pathLocations } = require('../../utils/pathLocations');
 
-let compNameGlob;
-
-const scoreThreshold = 0.4; // TODO set in config file
+let compNameGlob = '';
 
 const normalizeString = (str, spacer = '') => str.toLowerCase().replace(/ /g, spacer);
 
-function createNameVariations(appName, bundleId) {
-  const appNameNorm = appName.toLowerCase().replaceAll(' ', '');
-  const appNameWithoutDot = appNameNorm.toLowerCase().replaceAll('.', '');
-  const appNameUnderscore = appName.toLowerCase().replaceAll(' ', '_');
-  const appNameDash = appName.toLowerCase().replaceAll(' ', '-');
-  const appNameDot = appName.toLowerCase().replaceAll(' ', '.');
-
-  const bundleIdNorm = bundleId.toLowerCase().replaceAll(' ', '');
-
-  return [
-    appNameNorm,
-    appNameWithoutDot,
-    appNameUnderscore,
-    appNameDash,
-    appNameDot,
-    bundleIdNorm,
-  ];
+// replace spaces and space like chars with special char
+function replaceSpaceCharacters(str) {
+  return str.toLowerCase()
+    .replaceAll(' ', '*')
+    .replaceAll('-', '*')
+    .replaceAll('_', '*')
+    .replaceAll('.', '*');
 }
 
 async function getFilePatternArray(appName, bundleId) {
-  const nameVariations = createNameVariations(appName, bundleId);
   const appNameNorm = normalizeString(appName);
   const bundleIdNorm = normalizeString(bundleId);
 
-  let patternArray = [...nameVariations];
+  const nameVariations = [
+    replaceSpaceCharacters(appName),
+    replaceSpaceCharacters(bundleId), // com.test.app would be com*test*app
+  ];
+
+  const patternArray = [...nameVariations];
 
   const appNameComponents = appNameNorm.split('.');
-  if (appNameComponents) patternArray.push(appNameComponents[0]);
+  if (appNameComponents) patternArray.push(appNameComponents[0]); // test.com
 
   const bundleIdComponents = bundleIdNorm.split('.');
-  if (bundleIdComponents.length > 2 && bundleIdComponents[bundleIdComponents.length - 1].toLowerCase() === 'app') {
-    patternArray.push(`${bundleIdComponents.slice(0, bundleIdComponents.length - 1).join('.')}`);
+  if (bundleIdComponents.length > 2) {
+    patternArray.push(replaceSpaceCharacters(`${bundleIdComponents.slice(0, bundleIdComponents.length - 1).join('.')}`)); // instead of com.bear.app its just com.bear
   }
-
-  const appWithSuffix = new Set([]);
-  commonSuffix.forEach((suffix) => nameVariations.forEach((nameVariation) => appWithSuffix.add(`${nameVariation}${suffix}`)));
-
-  patternArray = [...patternArray, ...appWithSuffix];
 
   return [...new Set(patternArray)]; // remove potential duplicates
 }
 
 async function getComputerName() {
   const compName = await execSync('scutil --get ComputerName').toString();
-  console.log('compName', compName);
   // remove empty space at end of string
   return compName.substring(0, compName.length - 1);
 }
 
-function stripString(file) { // remove common file substrings (like uuid and comp name)
+// remove common substring from files, such as uuid, computer name and spaces
+function removeCommonFileSubstrings(file) {
   let transformedString = file;
+
   fileRegex.forEach((regex1) => {
     transformedString = transformedString.replace(regex1, '');
   });
@@ -71,39 +60,40 @@ function stripString(file) { // remove common file substrings (like uuid and com
     .replace(/\)/g, '');
 
   transformedString = transformedString.replace(normCompName, ''); // remove computer name from file name
+
+  transformedString = replaceSpaceCharacters(transformedString);
   return transformedString;
 }
 
-function doesFileContainAppPattern(patterns, fileToCheck) {
-  return patterns.find((filePatten) => {
-    if (fileToCheck.includes(filePatten)) {
-      const strippedFile = stripString(fileToCheck);
+function doesFileContainAppPattern(patterns, fileNameToCheck) {
+  return patterns.find((appFilePatten) => {
+    const strippedFileName = removeCommonFileSubstrings(fileNameToCheck);
+    let score = 0;
 
-      let score = 0;
-      const indexOfString = strippedFile.indexOf(filePatten);
-      for (let i = 0; i < strippedFile.length; i += 1) {
+    if (strippedFileName.includes(appFilePatten)) {
+      const indexOfString = strippedFileName.indexOf(appFilePatten);
+      for (let i = 0; i < strippedFileName.length; i += 1) {
         if (i === indexOfString) {
-          i += indexOfString + filePatten.length;
-          score += filePatten.length;
+          i += indexOfString + appFilePatten.length;
+          score += appFilePatten.length;
         }
-        if (strippedFile[parseInt(i, 10)] === '.') score += 0.5; // TODO just remove . and _ ?
-        if (strippedFile[parseInt(i, 10)] === '_') score += 0.5;
       }
-      if (score / strippedFile.length > scoreThreshold) {
-        return true;
-      }
-      return false;
+    }
+
+    if (score / strippedFileName.length > scoreThreshold) {
+      return true;
     }
     return false;
-  });
+  }) !== undefined;
 }
 
 async function findAppFiles(appName, bundleId) {
   try {
     compNameGlob = await getComputerName();
     const bundleIdComponents = bundleId.split('.');
+    const appOrg = bundleIdComponents[1];
 
-    const companyDirs = pathLocations.map((pathLocation) => `${pathLocation}/${bundleIdComponents[1]}`);
+    const companyDirs = pathLocations.map((pathLocation) => `${pathLocation}/${appOrg}`);
     const pathsToSearch = [...pathLocations, ...companyDirs];
     const directoryFilesPromiseArr = pathsToSearch.map((pathLocation) => fs.readdir(pathLocation));
     const directoryFiles = await Promise.allSettled(directoryFilesPromiseArr);
@@ -134,7 +124,9 @@ async function findAppFiles(appName, bundleId) {
 }
 
 module.exports = {
+  replaceSpaceCharacters,
   findAppFiles,
   getFilePatternArray,
-  stripString,
+  doesFileContainAppPattern,
+  removeCommonFileSubstrings,
 };
