@@ -3,6 +3,7 @@ module.exports = {
   env: {
     browser: true,
     node: true,
+    jest: true,
   },
   extends: ['airbnb-base', 'plugin:security/recommended'],
   settings: {
