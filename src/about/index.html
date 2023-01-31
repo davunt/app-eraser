@@ -5,21 +5,40 @@
 
     <link rel="stylesheet" href="../../assets/css/about.css" >
     <!-- Social Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link
+      rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+      integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
 
     <title>About App Eraser</title>
   </head>
   <body>
 
-    <h1>App Eraser</h1>
-    <p>Version: <span id="versionNumberText">...</span></p>
     <div class="flexRow">
-      <a href="#" id="appRepoIcon" class="fa fa-github"></a>
+      <div>
+        <img id="drag-drop-zone-image" src = "../../build/icon.png" width=200 height=200/>
+      </div>
+      <div>
+        <p>Version: <span id="versionNumberText">...</span></p>
+        <div class="flexRow">
+          <a href="#" id="appRepoIcon" class="fa-brands fa-github"></a>
+          <a href="#" id="appMastoIcon" class="fa-brands fa-mastodon"></a>
+        </div>
+
+        <hr/>
+
+        <p>Maintained by Davunt</p>
+        <div class="flexRow">
+          <a href="#" id="maintainerMastoIcon" class="fa-brands fa-mastodon"></a>
+        </div>
+      </div>
     </div>
 
-    <hr/>
 
-    <p>Maintainer: Davunt</p>
+
+
 
     <!-- You can also require other files to run in this process -->
     <script src="./index.js"></script>
