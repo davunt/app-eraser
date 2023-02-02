@@ -18,7 +18,7 @@ const bundleIdWithUnderscore = 'com_test_app';
 const bundleIdCombo = 'com-test_app';
 
 const replaceSpaceCharactersAppExpectedOutput = 'app*name';
-const replaceSpaceCharactersBundleExpectedOutput = 'com*test*app';
+const bundleIdWithStar = 'com*test*app';
 
 const patternArray = [
   'app',
@@ -37,7 +37,7 @@ describe('replaceSpaceCharacters - Replaces space chars with *', () => {
     expect(result1).toEqual(replaceSpaceCharactersAppExpectedOutput);
 
     const result2 = replaceSpaceCharacters(bundleIdWithSpaces);
-    expect(result2).toEqual(replaceSpaceCharactersBundleExpectedOutput);
+    expect(result2).toEqual(bundleIdWithStar);
   });
 
   it('Replaces . with *', () => {
@@ -45,7 +45,7 @@ describe('replaceSpaceCharacters - Replaces space chars with *', () => {
     expect(result1).toEqual(replaceSpaceCharactersAppExpectedOutput);
 
     const result2 = replaceSpaceCharacters(bundleId);
-    expect(result2).toEqual(replaceSpaceCharactersBundleExpectedOutput);
+    expect(result2).toEqual(bundleIdWithStar);
   });
 
   it('Replaces _ with *', () => {
@@ -53,7 +53,7 @@ describe('replaceSpaceCharacters - Replaces space chars with *', () => {
     expect(result1).toEqual(replaceSpaceCharactersAppExpectedOutput);
 
     const result2 = replaceSpaceCharacters(bundleIdWithUnderscore);
-    expect(result2).toEqual(replaceSpaceCharactersBundleExpectedOutput);
+    expect(result2).toEqual(bundleIdWithStar);
   });
 
   it('Replaces - with *', () => {
@@ -61,12 +61,12 @@ describe('replaceSpaceCharacters - Replaces space chars with *', () => {
     expect(result1).toEqual(replaceSpaceCharactersAppExpectedOutput);
 
     const result2 = replaceSpaceCharacters(bundleIdWithDash);
-    expect(result2).toEqual(replaceSpaceCharactersBundleExpectedOutput);
+    expect(result2).toEqual(bundleIdWithStar);
   });
 
   it('Replaces a combination of space chars with *', () => {
     const result = replaceSpaceCharacters(bundleIdCombo);
-    expect(result).toEqual(replaceSpaceCharactersBundleExpectedOutput);
+    expect(result).toEqual(bundleIdWithStar);
   });
 });
 
@@ -86,12 +86,12 @@ describe('getFilePatternArray - Get file patterns from app name and bundleId', (
     patterns.forEach((pattern) => {
       expect(pattern).toEqual(expect.not.stringContaining(' '));
     });
-    expect(patterns).toEqual(expect.arrayContaining(['app*name', 'com*test*app', 'appname', 'com*test']));
+    expect(patterns).toEqual(expect.arrayContaining(['app*name', bundleIdWithStar, 'appname', 'com*test']));
   });
 
   it('returns converted bundleId (lower case and replaced . with *)', async () => {
     const patterns = await getFilePatternArray(appName, bundleId);
-    expect(patterns).toEqual(expect.arrayContaining(['com*test*app']));
+    expect(patterns).toEqual(expect.arrayContaining([bundleIdWithStar]));
   });
 
   it('creates new pattern if app name contains .', async () => {
@@ -101,7 +101,7 @@ describe('getFilePatternArray - Get file patterns from app name and bundleId', (
 
   it('removes spaces from bundleId', async () => {
     const patterns = await getFilePatternArray(appName, bundleId);
-    expect(patterns).toEqual(expect.arrayContaining(['com*test*app']));
+    expect(patterns).toEqual(expect.arrayContaining([bundleIdWithStar]));
   });
 
   it('does not return duplicates', async () => {

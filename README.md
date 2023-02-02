@@ -4,7 +4,6 @@
 
 ![Mac OS](https://img.shields.io/badge/mac%20os-000000?style=flat-square&logo=macos&logoColor=F0F0F0)
 [![Licence](https://img.shields.io/github/license/davunt/app-eraser?style=flat-square)](./LICENSE)
-[![App Eraser Twitter](https://img.shields.io/twitter/url?label=@AppEraser&style=social&url=https%3A%2F%2Ftwitter.com%2FAppEraser)](https://twitter.com/AppEraser)
 
 App Eraser helps remove unwanted macOS applications and any related files that they leave behind.
 
@@ -42,6 +41,7 @@ The app is created using [Electron.js](https://www.electronjs.org/), HTML, CSS a
 
 ### Requirements
 - [nodejs](https://nodejs.org/en/)
+- [volta](https://volta.sh/) - for pinning of node version
 
 ### Scripts
 NPM Scripts:

@@ -5,7 +5,8 @@ module.exports = {
     node: true,
     jest: true,
   },
-  extends: ['airbnb-base', 'plugin:security/recommended'],
+  plugins: ['sonarjs'],
+  extends: ['airbnb-base', 'plugin:sonarjs/recommended'],
   settings: {
     'import/core-modules': ['electron'],
   },

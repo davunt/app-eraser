@@ -80,10 +80,7 @@ function doesFileContainAppPattern(patterns, fileNameToCheck) {
       }
     }
 
-    if (score / strippedFileName.length > scoreThreshold) {
-      return true;
-    }
-    return false;
+    return score / strippedFileName.length > scoreThreshold;
   }) !== undefined;
 }
 

@@ -152,7 +152,7 @@ deleteButton.addEventListener('click', async () => {
   );
 
   if (confirmDialogResp.response === 0) {
-    moveFilesToTrash(selectedFiles);
+    moveFilesToTrash();
   }
 });
 

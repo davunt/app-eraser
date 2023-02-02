@@ -181,8 +181,7 @@ ipcMain.handle('selectAppFromFinder', async () => {
     });
 
     if (!selection.canceled) {
-      const selectedFilePath = selection.filePaths[0];
-      return selectedFilePath;
+      return selection.filePaths[0];
     }
     return false;
   } catch (err) {
