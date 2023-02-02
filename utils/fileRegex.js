@@ -20,7 +20,7 @@ const commonExtensions = [
 
 const commonSubStrings = [
   'install',
-  // 'universal',
+  'universal',
 ];
 
 module.exports = {
