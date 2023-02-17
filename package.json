@@ -27,7 +27,8 @@
     "postversion": "git push && git push --tags"
   },
   "pre-commit": [
-    "lint"
+    "lint",
+    "test"
   ],
   "dependencies": {
     "electron-updater": "^5.2.1",
