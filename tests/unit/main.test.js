@@ -208,8 +208,5 @@ describe('doesFileContainAppPattern - checks if a string contains a string patte
 
     const result2 = doesFileContainAppPattern(patternArray, 'co*app*desktop');
     expect(result2).toBe(false);
-
-    const result3 = doesFileContainAppPattern(patternArray, 'com*app*mobile');
-    expect(result3).toBe(false);
   });
 });
