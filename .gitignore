@@ -9,3 +9,5 @@ build
 *.tgz
 *.log
 .DS_Store
+
+assets/icon
