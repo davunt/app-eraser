@@ -39,6 +39,13 @@ I’ve used similar tools in the past and have had issues related to some files 
 
 Another reason is the inherit privacy benefits that come from open source software. I don’t believe such a simple app should require any analytics or store any data about the usage of the software. I have open sourced the app to allow others to have peace of mind when using it.
 
+## 🕵️ How it works
+* App Eraser gets the name and bundle ID for the app you select to remove
+* Next, App Eraser will look at files across multiple directories on your computer
+* Each file is checked to see if they contain the app name or bundle ID, and how much of the file name is made up of these patterns
+* To ensure a more accurate comparison, common patterns (such as dates, UUIDs and file extensions) are not considered.
+* Only files with a score greater than the threshold are deemed to be related to the app
+
 ## 👩‍💻 Development
 The app is created using [Electron.js](https://www.electronjs.org/), HTML, CSS and JavaScript. If you wish to run from source you can simply clone this repository and follow the information below.
 
