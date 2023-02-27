@@ -20,6 +20,8 @@ const filesHeaderTitle = document.getElementById('files-header-title');
 const filesImage = '../../assets/img/files.svg';
 const addFileImage = '../../assets/img/add_files.svg';
 
+let globAppName = '';
+
 const isValidApp = (appPath) => path.extname(appPath) === '.app';
 
 const getAppIcon = (bundleId) => fileIcon.buffer(bundleId);
@@ -40,8 +42,21 @@ function clearList() {
   deleteButton.disabled = true;
 }
 
+async function closeRunningApplication() {
+  try {
+    await execSync(`osascript -e 'quit app "${globAppName}"'`);
+  } catch (err) {
+    console.error(err);
+    ipcRenderer.send(
+      'handleError',
+      'Unable to close running application',
+    );
+  }
+}
+
 async function moveFilesToTrash() {
   try {
+    closeRunningApplication();
     const selectedFiles = getSelectedFiles();
 
     const spOptions = {
@@ -107,8 +122,8 @@ async function appSelectionHandler(appPath) {
   loadingContainer.style.display = 'flex';
   clearList();
   if (isValidApp(appPath)) {
-    const appName = appNameFromPath(appPath);
-    const bundleId = await getBundleIdentifier(appName);
+    globAppName = appNameFromPath(appPath);
+    const bundleId = await getBundleIdentifier(globAppName);
     if (os.release() > mojaveDarwinMinVersion) {
       try {
         const appIconBuffer = await getAppIcon(bundleId);
@@ -120,12 +135,12 @@ async function appSelectionHandler(appPath) {
       dropZoneImage.src = filesImage;
     }
 
-    const appFiles = await findAppFiles(appName, bundleId);
+    const appFiles = await findAppFiles(globAppName, bundleId);
     appFiles.forEach((filePath, i) => {
       listItem(filePath, i);
     });
 
-    dropZoneText.innerHTML = `${appName}`;
+    dropZoneText.innerHTML = `${globAppName}`;
     filesHeaderTitle.innerHTML = `Related Files (${appFiles.length} Files)`;
     clearButton.style.display = 'block';
     deleteButton.disabled = false;
