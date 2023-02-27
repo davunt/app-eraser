@@ -23,6 +23,10 @@ hr {
   border-top: 1px solid;
 }
 
+#versionNumberText {
+  font-size: 30px;
+}
+
 .fa, .fa-brands {
   text-decoration: none;
   border-radius: 100px;

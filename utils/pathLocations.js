@@ -4,6 +4,7 @@ const pathLocations = [
   '/Applications',
   '/private/var/db/receipts',
   '/Library/LaunchDaemons',
+  homedir,
   `${homedir}/Downloads`,
   `${homedir}/Library`,
   `${homedir}/Library/Application Support`,
@@ -25,11 +26,6 @@ const pathLocations = [
   '/Library/Audio/Plug-Ins/HAL',
 ];
 
-const commonSuffix = [
-  'install',
-];
-
 module.exports = {
   pathLocations,
-  commonSuffix,
 };
