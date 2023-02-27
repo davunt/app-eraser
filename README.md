@@ -5,8 +5,9 @@
 ![Mac OS](https://img.shields.io/badge/mac%20os-000000?style=flat-square&logo=macos&logoColor=F0F0F0)
 [![Licence](https://img.shields.io/github/license/davunt/app-eraser?style=flat-square)](./LICENSE)
 
-Rate on:
-[AlternativeTo](https://alternativeto.net/software/app-eraser/about/)
+[ProductHunt](https://www.producthunt.com/posts/app-eraser)
+| [AlternativeTo](https://alternativeto.net/software/app-eraser/about/)
+
 
 App Eraser helps remove unwanted macOS applications and any related files that they leave behind.
 
