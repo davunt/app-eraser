@@ -26,7 +26,9 @@ const isValidApp = (appPath) => path.extname(appPath) === '.app';
 
 const getAppIcon = (bundleId) => fileIcon.buffer(bundleId);
 
-const getSelectedFiles = () => [...document.querySelectorAll('input[name=checkbox]:checked')].map((item) => item.value);
+const getSelectedFiles = () => [...document.querySelectorAll('input[name=checkbox]:checked')].map(
+  (item) => item.value,
+);
 
 const removeChildren = (parent) => {
   while (parent.lastChild) {
@@ -36,7 +38,7 @@ const removeChildren = (parent) => {
 
 function clearList() {
   removeChildren(fileList);
-  dropZoneText.innerHTML = 'Drop Apps Here or Click To Select';
+  dropZoneText.innerHTML = 'Drop App Here <br> or </br> Click To Select';
   filesHeaderTitle.innerHTML = 'Related Files';
   dropZoneImage.src = addFileImage;
   deleteButton.disabled = true;
@@ -47,10 +49,7 @@ async function closeRunningApplication() {
     await execSync(`osascript -e 'quit app "${globAppName}"'`);
   } catch (err) {
     console.error(err);
-    ipcRenderer.send(
-      'handleError',
-      'Unable to close running application',
-    );
+    ipcRenderer.send('handleError', 'Unable to close running application');
   }
 }
 
@@ -63,9 +62,14 @@ async function moveFilesToTrash() {
       name: 'App Eraser',
     };
 
-    const posixFile = `POSIX file \\"${selectedFiles.join('\\", POSIX file \\"')}\\"`;
+    const posixFile = `POSIX file \\"${selectedFiles.join(
+      '\\", POSIX file \\"',
+    )}\\"`;
 
-    await execSync(`osascript -e "tell application \\"Finder\\" to delete { ${posixFile} } "`, spOptions).toString();
+    await execSync(
+      `osascript -e "tell application \\"Finder\\" to delete { ${posixFile} } "`,
+      spOptions,
+    ).toString();
     clearList();
   } catch (err) {
     console.error(err);
@@ -78,7 +82,9 @@ async function moveFilesToTrash() {
 }
 
 async function getBundleIdentifier(appName) {
-  const bundleId = await execSync(`osascript -e 'id of app "${appName}"'`).toString();
+  const bundleId = await execSync(
+    `osascript -e 'id of app "${appName}"'`,
+  ).toString();
   console.log('bundleId', bundleId);
   // remove empty space at end of string
   return bundleId.substring(0, bundleId.length - 1);
@@ -95,8 +101,10 @@ function listItem(filePath, index) {
   const isEven = index % 2 === 0;
   const div = document.createElement('div');
   if (isEven) {
+    div.classList.add('fileItem');
     div.classList.add('fileItem1');
   } else {
+    div.classList.add('fileItem');
     div.classList.add('fileItem2');
   }
 
@@ -127,7 +135,9 @@ async function appSelectionHandler(appPath) {
     if (os.release() > mojaveDarwinMinVersion) {
       try {
         const appIconBuffer = await getAppIcon(bundleId);
-        dropZoneImage.src = `data:image/png;base64,${appIconBuffer.toString('base64')}`;
+        dropZoneImage.src = `data:image/png;base64,${appIconBuffer.toString(
+          'base64',
+        )}`;
       } catch (err) {
         dropZoneImage.src = filesImage;
       }
@@ -141,7 +151,7 @@ async function appSelectionHandler(appPath) {
     });
 
     dropZoneText.innerHTML = `${globAppName}`;
-    filesHeaderTitle.innerHTML = `Related Files (${appFiles.length} Files)`;
+    filesHeaderTitle.innerHTML = `Related Files · ${appFiles.length} Files Found`;
     clearButton.style.display = 'block';
     deleteButton.disabled = false;
   } else {
