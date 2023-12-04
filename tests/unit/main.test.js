@@ -1,7 +1,7 @@
 const { isArrayUniqueValues } = require('../../utils/funcs');
 const { commonExtensions, commonSubStrings } = require('../../utils/fileRegex');
 const {
-  getFilePatternArray, replaceSpaceCharacters,
+  getAppNameVariations, replaceSpaceCharacters,
   removeCommonFileSubstrings, doesFileContainAppPattern,
 } = require('../../src/main/index');
 
@@ -70,43 +70,43 @@ describe('replaceSpaceCharacters - Replaces space chars with *', () => {
   });
 });
 
-describe('getFilePatternArray - Get file patterns from app name and bundleId', () => {
+describe('getAppNameVariations - Get file patterns from app name and bundleId', () => {
   it('returns an array of strings', async () => {
-    const patterns = await getFilePatternArray(appName, bundleId);
-    expect(patterns).toEqual(expect.arrayContaining([expect.any(String)]));
+    const appNameVariations = await getAppNameVariations(appName, bundleId);
+    expect(appNameVariations).toEqual(expect.arrayContaining([expect.any(String)]));
   });
 
   it('correctly converts all patterns to lower case', async () => {
-    const patterns = await getFilePatternArray(appName, bundleId);
+    const patterns = await getAppNameVariations(appName, bundleId);
     patterns.forEach((pattern) => expect(pattern).toBe(pattern.toLowerCase()));
   });
 
   it('correctly replaces spaces with . and _ and - with *', async () => {
-    const patterns = await getFilePatternArray(appNameWithSpaces, bundleId);
-    patterns.forEach((pattern) => {
+    const appNameVariations = await getAppNameVariations(appNameWithSpaces, bundleId);
+    appNameVariations.forEach((pattern) => {
       expect(pattern).toEqual(expect.not.stringContaining(' '));
     });
-    expect(patterns).toEqual(expect.arrayContaining(['app*name', bundleIdWithStar, 'appname', 'com*test']));
+    expect(appNameVariations).toEqual(expect.arrayContaining(['app*name', 'appname', 'com*test']));
   });
 
-  it('returns converted bundleId (lower case and replaced . with *)', async () => {
-    const patterns = await getFilePatternArray(appName, bundleId);
-    expect(patterns).toEqual(expect.arrayContaining([bundleIdWithStar]));
-  });
+  // it('returns converted bundleId (lower case and replaced . with *)', async () => {
+  //   const appNameVariations = await getAppNameVariations(appName, bundleId);
+  //   expect(appNameVariations).toEqual(expect.arrayContaining([bundleIdWithStar]));
+  // });
 
   it('creates new pattern if app name contains .', async () => {
-    const patterns = await getFilePatternArray(appNameWithDot, bundleId);
-    expect(patterns).toEqual(expect.arrayContaining(['app']));
+    const appNameVariations = await getAppNameVariations(appNameWithDot, bundleId);
+    expect(appNameVariations).toEqual(expect.arrayContaining(['app']));
   });
 
-  it('removes spaces from bundleId', async () => {
-    const patterns = await getFilePatternArray(appName, bundleId);
-    expect(patterns).toEqual(expect.arrayContaining([bundleIdWithStar]));
-  });
+  // it('removes spaces from bundleId', async () => {
+  //   const appNameVariations = await getAppNameVariations(appName, bundleId);
+  //   expect(appNameVariations).toEqual(expect.arrayContaining([bundleIdWithStar]));
+  // });
 
   it('does not return duplicates', async () => {
-    const patterns = await getFilePatternArray(appName, bundleId);
-    expect(isArrayUniqueValues(patterns)).toBeTruthy();
+    const appNameVariations = await getAppNameVariations(appName, bundleId);
+    expect(isArrayUniqueValues(appNameVariations)).toBeTruthy();
   });
 });
 
@@ -160,53 +160,64 @@ describe('removeCommonFileSubstrings - removes common app file strings from stri
 
 describe('doesFileContainAppPattern - checks if a string contains a string pattern', () => {
   it('app name returns true', () => {
-    const result = doesFileContainAppPattern(patternArray, 'app');
+    const result = doesFileContainAppPattern(patternArray, bundleId, 'app');
     expect(result).toBe(true);
 
-    const bundleResult = doesFileContainAppPattern(patternArray, 'com*app*desktop');
+    const bundleResult = doesFileContainAppPattern(patternArray, bundleId, 'com*app*desktop');
     expect(bundleResult).toBe(true);
   });
 
   it('app name with version returns true', () => {
-    const result1 = doesFileContainAppPattern(patternArray, `app-${exampleVersion1}`);
+    const result1 = doesFileContainAppPattern(patternArray, bundleId, `app-${exampleVersion1}`);
     expect(result1).toBe(true);
 
-    const result2 = doesFileContainAppPattern(patternArray, `app-${exampleVersion2}`);
+    const result2 = doesFileContainAppPattern(patternArray, bundleId, `app-${exampleVersion2}`);
     expect(result2).toBe(true);
 
-    const bundleResult1 = doesFileContainAppPattern(patternArray, `com*app*desktop-${exampleVersion1}`);
+    const bundleResult1 = doesFileContainAppPattern(patternArray, bundleId, `com*app*desktop-${exampleVersion1}`);
     expect(bundleResult1).toBe(true);
 
-    const bundleResult2 = doesFileContainAppPattern(patternArray, `com*app*desktop-${exampleVersion2}`);
+    const bundleResult2 = doesFileContainAppPattern(patternArray, bundleId, `com*app*desktop-${exampleVersion2}`);
     expect(bundleResult2).toBe(true);
   });
 
   it('app name with UUID returns true', () => {
-    const result = doesFileContainAppPattern(patternArray, `app-${exampleUUID}`);
+    const result = doesFileContainAppPattern(patternArray, bundleId, `app-${exampleUUID}`);
     expect(result).toBe(true);
 
-    const bundleResult = doesFileContainAppPattern(patternArray, `com*app*desktop-${exampleUUID}`);
+    const bundleResult = doesFileContainAppPattern(patternArray, bundleId, `com*app*desktop-${exampleUUID}`);
     expect(bundleResult).toBe(true);
   });
 
   it('app name with date returns true', () => {
-    const result = doesFileContainAppPattern(patternArray, `app-${exampleDate}`);
+    const result = doesFileContainAppPattern(patternArray, bundleId, `app-${exampleDate}`);
     expect(result).toBe(true);
 
-    const bundleResult = doesFileContainAppPattern(patternArray, `com*app*desktop-${exampleDate}`);
+    const bundleResult = doesFileContainAppPattern(patternArray, bundleId, `com*app*desktop-${exampleDate}`);
     expect(bundleResult).toBe(true);
   });
 
   it('different app name returns false', () => {
-    const result = doesFileContainAppPattern(patternArray, 'nottheapp');
+    const result = doesFileContainAppPattern(patternArray, bundleId, 'nottheapp');
     expect(result).toBe(false);
   });
 
   it('different bundle id returns false', () => {
-    const result1 = doesFileContainAppPattern(patternArray, 'com*nottheapp*desktop');
+    const result1 = doesFileContainAppPattern(patternArray, bundleId, 'com*nottheapp*desktop');
     expect(result1).toBe(false);
 
-    const result2 = doesFileContainAppPattern(patternArray, 'co*app*desktop');
+    const result2 = doesFileContainAppPattern(patternArray, bundleId, 'co*app*desktop');
     expect(result2).toBe(false);
+  });
+
+  it('contains bundleId in long string returns true', () => {
+    const result1 = doesFileContainAppPattern(patternArray, bundleId, bundleIdWithStar.padStart(20, 'x'));
+    expect(result1).toBe(true);
+
+    const result2 = doesFileContainAppPattern(patternArray, bundleId, bundleIdWithStar.padEnd(20, 'x'));
+    expect(result2).toBe(true);
+
+    const result3 = doesFileContainAppPattern(patternArray, bundleId, bundleIdWithStar.padStart(20, 'x').padEnd(20, 'x'));
+    expect(result3).toBe(true);
   });
 });

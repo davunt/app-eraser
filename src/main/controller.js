@@ -6,7 +6,7 @@ const { execSync } = require('child_process');
 const fileIcon = require('file-icon');
 
 const { mojaveDarwinMinVersion } = require('../../utils/config');
-const { findAppFiles } = require('./index');
+const { findAppFilesToRemove } = require('./index');
 
 const dropZone = document.getElementById('drag-drop-zone');
 const dropZoneText = document.getElementById('drag-drop-zone-text');
@@ -145,7 +145,7 @@ async function appSelectionHandler(appPath) {
       dropZoneImage.src = filesImage;
     }
 
-    const appFiles = await findAppFiles(globAppName, bundleId);
+    const appFiles = await findAppFilesToRemove(globAppName, bundleId);
     appFiles.forEach((filePath, i) => {
       listItem(filePath, i);
     });

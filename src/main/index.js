@@ -7,6 +7,7 @@ const { pathLocations } = require('../../utils/pathLocations');
 
 let compNameGlob = '';
 
+// convert string to lowercase and removes spaces
 const normalizeString = (str, spacer = '') => str.toLowerCase().replace(/ /g, spacer);
 
 // replace spaces and space like chars with special char
@@ -18,26 +19,22 @@ function replaceSpaceCharacters(str) {
     .replaceAll('.', '*');
 }
 
-async function getFilePatternArray(appName, bundleId) {
-  const appNameNorm = normalizeString(appName);
-  const bundleIdNorm = normalizeString(bundleId);
+// return array of app name variations using the app name and bundleId
+async function getAppNameVariations(appName, bundleId) {
+  const patternArray = [replaceSpaceCharacters(appName)];
 
-  const nameVariations = [
-    replaceSpaceCharacters(appName),
-    replaceSpaceCharacters(bundleId), // com.test.app would be com*test*app
-  ];
+  // if app name contains a '.' (e.g test.com), add first component to array (e.g test)
+  const appNameComponents = normalizeString(appName).split('.');
+  if (appNameComponents) patternArray.push(appNameComponents[0]);
 
-  const patternArray = [...nameVariations];
-
-  const appNameComponents = appNameNorm.split('.');
-  if (appNameComponents) patternArray.push(appNameComponents[0]); // test.com
-
-  const bundleIdComponents = bundleIdNorm.split('.');
+  // if bundleId contains more than 2 components (e.g com.test.app)
+  // add first two components to list (com.test)
+  const bundleIdComponents = normalizeString(bundleId).split('.');
   if (bundleIdComponents.length > 2) {
-    patternArray.push(replaceSpaceCharacters(`${bundleIdComponents.slice(0, bundleIdComponents.length - 1).join('.')}`)); // instead of com.bear.app its just com.bear
+    patternArray.push(replaceSpaceCharacters(`${bundleIdComponents.slice(0, bundleIdComponents.length - 1).join('.')}`));
   }
 
-  return [...new Set(patternArray)]; // remove potential duplicates
+  return [...new Set(patternArray)];
 }
 
 async function getComputerName() {
@@ -65,17 +62,22 @@ function removeCommonFileSubstrings(file) {
   return transformedString;
 }
 
-function doesFileContainAppPattern(patterns, fileNameToCheck) {
-  return patterns.find((appFilePatten) => {
-    const strippedFileName = removeCommonFileSubstrings(fileNameToCheck);
-    let score = 0;
+function doesFileContainAppPattern(appNameVariations, bundleId, fileNameToCheck) {
+  // return boolean for if file is related to selected app
+  const strippedFileName = removeCommonFileSubstrings(fileNameToCheck);
 
-    if (strippedFileName.includes(appFilePatten)) {
-      const indexOfString = strippedFileName.indexOf(appFilePatten);
+  // if file contains bundleID then file is related to app
+  if (strippedFileName.includes(replaceSpaceCharacters(bundleId))) return true;
+
+  // check if file contains variations of app name
+  return appNameVariations.find((appNameFilePatten) => {
+    let score = 0;
+    if (strippedFileName.includes(appNameFilePatten)) {
+      const indexOfString = strippedFileName.indexOf(appNameFilePatten);
       for (let i = 0; i < strippedFileName.length; i += 1) {
         if (i === indexOfString) {
-          i += indexOfString + appFilePatten.length;
-          score += appFilePatten.length;
+          i += indexOfString + appNameFilePatten.length;
+          score += appNameFilePatten.length;
         }
       }
     }
@@ -84,27 +86,28 @@ function doesFileContainAppPattern(patterns, fileNameToCheck) {
   }) !== undefined;
 }
 
-async function findAppFiles(appName, bundleId) {
+async function findAppFilesToRemove(appName, bundleId) {
   try {
     compNameGlob = await getComputerName();
+
     const bundleIdComponents = bundleId.split('.');
     const appOrg = bundleIdComponents[1];
 
     const companyDirs = pathLocations.map((pathLocation) => `${pathLocation}/${appOrg}`);
     const pathsToSearch = [...pathLocations, ...companyDirs];
     const directoryFilesPromiseArr = pathsToSearch.map((pathLocation) => fs.readdir(pathLocation));
+    // files to check
     const directoryFiles = await Promise.allSettled(directoryFilesPromiseArr);
 
-    const filePatternArray = await getFilePatternArray(appName, bundleId);
+    const appNameVariations = await getAppNameVariations(appName, bundleId);
 
     const filesToRemove = new Set([]);
-
     directoryFiles.forEach((dir, index) => {
       if (dir.status === 'fulfilled') {
         dir.value.forEach((dirFile) => {
           const dirFileNorm = normalizeString(dirFile);
           if (
-            doesFileContainAppPattern(filePatternArray, dirFileNorm)
+            doesFileContainAppPattern(appNameVariations, bundleId, dirFileNorm)
           ) {
             filesToRemove.add(`${pathsToSearch[parseInt(index, 10)]}/${dirFile}`);
           }
@@ -112,7 +115,6 @@ async function findAppFiles(appName, bundleId) {
       }
     });
 
-    // convert set to array
     return [...filesToRemove];
   } catch (err) {
     console.error(err);
@@ -122,8 +124,8 @@ async function findAppFiles(appName, bundleId) {
 
 module.exports = {
   replaceSpaceCharacters,
-  findAppFiles,
-  getFilePatternArray,
+  findAppFilesToRemove,
+  getAppNameVariations,
   doesFileContainAppPattern,
   removeCommonFileSubstrings,
 };
