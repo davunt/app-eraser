@@ -38,7 +38,7 @@ const removeChildren = (parent) => {
 
 function clearList() {
   removeChildren(fileList);
-  dropZoneText.innerHTML = 'Drop App Here <br> or </br> Click To Select';
+  dropZoneText.innerHTML = 'Drag and Drop App Here';
   filesHeaderTitle.innerHTML = 'Related Files';
   dropZoneImage.src = addFileImage;
   deleteButton.disabled = true;
