@@ -89,20 +89,10 @@ describe('getAppNameVariations - Get file patterns from app name and bundleId', 
     expect(appNameVariations).toEqual(expect.arrayContaining(['app*name', 'appname', 'com*test']));
   });
 
-  // it('returns converted bundleId (lower case and replaced . with *)', async () => {
-  //   const appNameVariations = await getAppNameVariations(appName, bundleId);
-  //   expect(appNameVariations).toEqual(expect.arrayContaining([bundleIdWithStar]));
-  // });
-
   it('creates new pattern if app name contains .', async () => {
     const appNameVariations = await getAppNameVariations(appNameWithDot, bundleId);
     expect(appNameVariations).toEqual(expect.arrayContaining(['app']));
   });
-
-  // it('removes spaces from bundleId', async () => {
-  //   const appNameVariations = await getAppNameVariations(appName, bundleId);
-  //   expect(appNameVariations).toEqual(expect.arrayContaining([bundleIdWithStar]));
-  // });
 
   it('does not return duplicates', async () => {
     const appNameVariations = await getAppNameVariations(appName, bundleId);
