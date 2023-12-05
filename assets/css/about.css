@@ -1,11 +1,4 @@
-:root {
-  --primary: #292827;
-  --primaryDark: #1c1b1b;
-  --primaryLight: #363533;
-}
-
 html, body{
-  font-family: Helvetica;
   height: 100%;
   width: 100%;
   margin: 10;
@@ -13,8 +6,6 @@ html, body{
   flex-direction:column;
   justify-content:center;
   align-items: center;
-  background-color: var(--primary);
-  color:rgba(255, 255, 255, 0.8);
 }
 
 hr {
@@ -24,7 +15,7 @@ hr {
 }
 
 #versionNumberText {
-  font-size: 30px;
+  font-size: 20px;
 }
 
 .fa, .fa-brands {
@@ -35,18 +26,13 @@ hr {
 }
 
 .fa-github {  
-  background: white;  
-  color: black;
+  background-color: rgba(101, 101, 101, 0.8);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .fa-mastodon {  
-  background: white;  
-  color: black;
-}
-
-.fa:hover, .fa-brands:hover {
-  background-color: rgba(200, 200, 200, 0.8);
-  color:rgba(255, 255, 255, 0.8);
+  background-color: rgba(101, 101, 101, 0.8);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .flexRow {

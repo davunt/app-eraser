@@ -1,0 +1,36 @@
+:root {
+  --primary: #303030;
+  --primaryDark: #1c1b1b;
+  --primaryLight: #363533;
+  --lightGrey: #f3f3f3;
+}
+
+html,
+body {
+  margin: 0;
+  background-color: var(--primary);
+  height: 100%;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: -apple-system, system-ui, BlinkMacSystemFont;
+}
+
+button {
+  border: none;
+  background-color: rgba(101, 101, 101, 0.8);
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  text-decoration: none;
+  font-size: 15px;
+  padding: 3px 15px 3px 15px;
+  border-radius: 8%;
+  height: 25px;
+}
+
+button:disabled {
+  background-color: rgba(80, 80, 80, 0.8);
+  color: rgba(150, 150, 150, 0.8);
+}
+
+button {
+  transition-duration: 0.3s;
+}

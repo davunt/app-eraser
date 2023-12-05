@@ -2,18 +2,14 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="
-    img-src 'self' blob: data:;
-    default-src 'self'; script-src 'self'"
-    />
-    <meta
-      http-equiv="X-Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
-    />
+    <link
+    rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+    integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
 
+    <link rel="stylesheet" href="../../assets/css/common.css" />
     <link rel="stylesheet" href="../../assets/css/index.css" />
 
     <title>App Eraser</title>
@@ -42,6 +38,8 @@
         <div class="files-container-header">
           <h2 id="files-header-title" class="files-header-title">
             Related Files
+          </h2>
+          <h2 id="files-header-subtitle">
           </h2>
         </div>
         <div class="scroll-view">

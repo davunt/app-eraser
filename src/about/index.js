@@ -19,5 +19,5 @@ maintainerMastoIcon.addEventListener('click', () => {
 
 ipcRenderer.on('appVersion', (e, value) => {
   const versionNumberText = document.getElementById('versionNumberText');
-  versionNumberText.innerHTML = value;
+  versionNumberText.innerHTML = `Version ${value}`;
 });
